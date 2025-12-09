@@ -1,0 +1,38 @@
+# Компилированные файлы
+target/
+*.class
+
+# Maven
+*.log
+*.tmp
+*.bak
+*.swp
+.mvn/
+!mvn/wrapper/maven-wrapper.jar
+
+# IDE (VS Code)
+.vscode/
+*.code-workspace
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# IntelliJ IDEA
+*.iml
+.idea/
+out/
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.bak
+
+# Ресурсы, которые не нужно коммитить
+*.keystore
+*.jks

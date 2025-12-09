@@ -1,0 +1,77 @@
+Структура папок
+Серийный номер тома: 46C5-07F3
+C:.
+|   .gitignore
+|   pom.xml
+|   structure.txt
+|   
+\---src
+    \---main
+        +---java
+        |   \---com
+        |       \---example
+        |           \---tetoo
+        |               +---app
+        |               |       Main.java
+        |               |       
+        |               +---gui
+        |               |   +---controllers
+        |               |   |       ChatsController.java
+        |               |   |       InfoController.java
+        |               |   |       MainController.java
+        |               |   |       ProfileController.java
+        |               |   |       ProfilesController.java
+        |               |   |       RegistrationController.java
+        |               |   |       TestsController.java
+        |               |   |       
+        |               |   +---styles
+        |               |   \---views
+        |               +---model
+        |               |       Chat.java
+        |               |       Message.java
+        |               |       Test.java
+        |               |       User.java
+        |               |       
+        |               +---network
+        |               |   +---http
+        |               |   |       HttpClient.java
+        |               |   |       HttpServer.java
+        |               |   |       
+        |               |   \---socket
+        |               |           SocketClient.java
+        |               |           SocketServer.java
+        |               |           
+        |               +---repository
+        |               |       ChatRepository.java
+        |               |       MessageRepository.java
+        |               |       TestRepository.java
+        |               |       UserRepository.java
+        |               |       
+        |               +---service
+        |               |   |   AdminService.java
+        |               |   |   ChatService.java
+        |               |   |   TestService.java
+        |               |   |   UserService.java
+        |               |   |   
+        |               |   \---interfaces
+        |               |           IChatService.java
+        |               |           ITestService.java
+        |               |           IUserService.java
+        |               |           
+        |               \---util
+        |                       Constants.java
+        |                       LoggerFactory.java
+        |                       Validators.java
+        |                       
+        \---resources
+            +---fxml
+            |       Chats.fxml
+            |       Info.fxml
+            |       Main.fxml
+            |       Profile.fxml
+            |       Profiles.fxml
+            |       Registration.fxml
+            |       Tests.fxml
+            |       
+            +---images
+            \---styles
