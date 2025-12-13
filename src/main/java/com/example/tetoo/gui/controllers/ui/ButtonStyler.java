@@ -13,10 +13,12 @@ public class ButtonStyler {
     public static void setupButtonStyles(Button register, Button login, VBox mainContent, VBox buttonsContainer) {
         String font = FontLoader.getFontFamily();
 
-        String registerStyle = String.format(
-                "-fx-font-family: '%s'; -fx-font-size: 18px; -fx-font-weight: bold;" +
-                "-fx-text-fill: white; -fx-background-color: #ec4b6e; -fx-background-radius: 30;" +
-                "-fx-padding: 15 50; -fx-border-radius: 30; -fx-border-width: 0; -fx-cursor: hand;", font);
+        String registerStyle = String.format( "-fx-font-family: '%s';" + "-fx-font-size: 18px;" + 
+                                            "-fx-font-weight: bold;" + "-fx-text-fill: white;" + 
+                                            "-fx-background-color: #ec4b6e;" + "-fx-background-radius: 30;" + 
+                                            "-fx-padding: 15 50;" + "-fx-border-radius: 30;" + "-fx-border-width: 0;" + 
+                                            "-fx-cursor: hand;" + "-fx-effect: dropshadow(gaussian, rgba(236,75,110,0.5), 15, 0, 0, 5);", 
+                                            font);
 
         String loginStyle = String.format(
                 "-fx-font-family: '%s'; -fx-font-size: 16px; -fx-font-weight: bold;" +
