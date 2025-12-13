@@ -15,11 +15,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        System.out.println("Проверка запуска"); // потом убрать
+        System.out.println("Startup check"); // потом убрать
 
 
         splashScreen = new SplashScreen(primaryStage, () -> {
-            System.out.println(" Переход к главному экрану..."); // потом убрать
+            System.out.println("Transition to the main screen..."); // потом убрать
             Platform.runLater(() -> showMainScreen(primaryStage));
         });
         splashScreen.show();

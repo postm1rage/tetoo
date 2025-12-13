@@ -342,13 +342,13 @@ public class MainController implements Initializable {
     @FXML
     private void handleRegister() {
         animateButtonClick(registerButton);
-        System.out.println("Кнопка 'Зарегистрироваться' нажата");
+        System.out.println("Registration button pressed");
     }
 
     @FXML
     private void handleLogin() {
         animateButtonClick(loginButton);
-        System.out.println("Кнопка 'Войти' нажата");
+        System.out.println("Login button pressed");
     }
 
     private void animateButtonClick(Button button) {

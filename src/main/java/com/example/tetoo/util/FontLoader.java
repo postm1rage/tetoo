@@ -15,11 +15,11 @@ public class FontLoader {
                     Font font = Font.loadFont(fontUrl.toExternalForm(), 12);
                     if (font != null) {
                         fontFamily = font.getFamily();
-                        System.out.println("Шрифт загружен: " + fontFamily);
+                        System.out.println("Font loaded: " + fontFamily);
                     }
                 }
             } catch (Exception e) {
-                System.err.println("Ошибка загрузки шрифта: " + e.getMessage());
+                System.err.println("Font loading error: " + e.getMessage());
                 fontFamily = "Arial"; // Используем Arial если ошибка
             }
             fontLoaded = true;
