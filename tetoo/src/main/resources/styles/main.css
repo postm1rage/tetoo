@@ -1,0 +1,44 @@
+
+.root {
+    -fx-font-family: 'Gothra';
+}
+
+
+.text {
+    -fx-font-smoothing-type: gray;
+}
+
+.label {
+    -fx-font-smoothing-type: gray;
+}
+
+
+.text-field {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(236,75,110,0.3);
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.5);
+    -fx-padding: 10 15;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused {
+    -fx-border-color: #ec4b6e;
+    -fx-effect: dropshadow(gaussian, rgba(236,75,110,0.3), 10, 0, 0, 0);
+}
+
+/* Стили для пароля */
+.password-field {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(236,75,110,0.3);
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.5);
+    -fx-padding: 10 15;
+    -fx-font-size: 14px;
+}
