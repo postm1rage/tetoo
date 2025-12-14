@@ -1,0 +1,164 @@
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    is_verified BOOLEAN DEFAULT FALSE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_created_at ON users(created_at);
+
+CREATE TABLE user_profiles (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F', 'O')),
+    birth_date DATE NOT NULL,
+    about_me TEXT,
+    height INTEGER,
+    relationship_goal VARCHAR(50),
+    city VARCHAR(100),
+    country VARCHAR(100),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    CONSTRAINT fk_user_profiles_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
+CREATE INDEX idx_user_profiles_gender ON user_profiles(gender);
+CREATE INDEX idx_user_profiles_city ON user_profiles(city);
+CREATE INDEX idx_user_profiles_country ON user_profiles(country);
+
+CREATE TABLE photos (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    file_path VARCHAR(500) NOT NULL,
+    is_avatar BOOLEAN DEFAULT FALSE NOT NULL,
+    order_index INTEGER DEFAULT 0 NOT NULL,
+    is_approved BOOLEAN DEFAULT FALSE NOT NULL,
+    uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    CONSTRAINT fk_photos_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX idx_photos_user_id ON photos(user_id);
+CREATE INDEX idx_photos_is_avatar ON photos(is_avatar);
+CREATE INDEX idx_photos_is_approved ON photos(is_approved);
+
+CREATE TABLE interests (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    category VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE user_interests (
+    user_id BIGINT NOT NULL,
+    interest_id BIGINT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    CONSTRAINT pk_user_interests PRIMARY KEY (user_id, interest_id),
+    CONSTRAINT fk_user_interests_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_user_interests_interest
+        FOREIGN KEY (interest_id)
+        REFERENCES interests(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX idx_user_interests_interest_id ON user_interests(interest_id);
+
+CREATE TABLE likes (
+    id BIGSERIAL PRIMARY KEY,
+    from_user_id BIGINT NOT NULL,
+    to_user_id BIGINT NOT NULL,
+    type VARCHAR(20) DEFAULT 'like' NOT NULL CHECK (type IN ('like', 'dislike', 'superlike')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    CONSTRAINT fk_likes_from_user
+        FOREIGN KEY (from_user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_likes_to_user
+        FOREIGN KEY (to_user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT check_different_users CHECK (from_user_id != to_user_id),
+    CONSTRAINT unique_like_pair UNIQUE (from_user_id, to_user_id)
+);
+
+CREATE INDEX idx_likes_from_user_id ON likes(from_user_id);
+CREATE INDEX idx_likes_to_user_id ON likes(to_user_id);
+CREATE INDEX idx_likes_created_at ON likes(created_at);
+
+CREATE TABLE matches (
+    id BIGSERIAL PRIMARY KEY,
+    user1_id BIGINT NOT NULL,
+    user2_id BIGINT NOT NULL,
+    matched_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE NOT NULL,
+    CONSTRAINT fk_matches_user1
+        FOREIGN KEY (user1_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_matches_user2
+        FOREIGN KEY (user2_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT check_different_users_match CHECK (user1_id < user2_id),
+    CONSTRAINT unique_match_pair UNIQUE (user1_id, user2_id)
+);
+
+CREATE INDEX idx_matches_user1_id ON matches(user1_id);
+CREATE INDEX idx_matches_user2_id ON matches(user2_id);
+CREATE INDEX idx_matches_is_active ON matches(is_active);
+
+CREATE TABLE messages (
+    id BIGSERIAL PRIMARY KEY,
+    sender_id BIGINT NOT NULL,
+    receiver_id BIGINT NOT NULL,
+    message_text TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE NOT NULL,
+    read_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    CONSTRAINT fk_messages_sender
+        FOREIGN KEY (sender_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_messages_receiver
+        FOREIGN KEY (receiver_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT check_different_users_message CHECK (sender_id != receiver_id)
+);
+
+CREATE INDEX idx_messages_sender_id ON messages(sender_id);
+CREATE INDEX idx_messages_receiver_id ON messages(receiver_id);
+CREATE INDEX idx_messages_created_at ON messages(created_at);
+CREATE INDEX idx_messages_is_read ON messages(is_read);
+CREATE INDEX idx_messages_conversation ON messages(
+    LEAST(sender_id, receiver_id),
+    GREATEST(sender_id, receiver_id),
+    created_at DESC
+);
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_user_profiles_updated_at
+    BEFORE UPDATE ON user_profiles
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
