@@ -1,24 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="mainContainer" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<StackPane fx:id="mainContainer" prefHeight="600.0" prefWidth="900.0"
+           stylesheets="@../styles/main.css"
+           xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.example.tetoo.gui.controllers.MainController">
 
+    <AnchorPane fx:id="formsContainer" prefHeight="600.0" prefWidth="900.0">
+
+        <VBox alignment="CENTER" prefHeight="600.0" prefWidth="450.0" spacing="20.0" styleClass="form-box">
+            <Label styleClass="title-label" text="Создать аккаунт" />
+            <Label styleClass="small-text" text="Введите данные для регистрации" />
+
+            <TextField promptText="Имя пользователя" styleClass="input-field" />
+            <TextField promptText="Почта" styleClass="input-field" />
+            <PasswordField promptText="Пароль" styleClass="input-field" />
+
+            <Button mnemonicParsing="false" onAction="#handleRegister" styleClass="action-btn" text="ЗАРЕГИСТРИРОВАТЬСЯ" />
+        </VBox>
+
+        <VBox alignment="CENTER" layoutX="450.0" prefHeight="600.0" prefWidth="450.0" spacing="20.0" styleClass="form-box">
+            <Label styleClass="title-label" text="Вход в аккаунт" />
+            <Label styleClass="small-text" text="Войдите используя свой email" />
+
+            <TextField promptText="Почта" styleClass="input-field" />
+            <PasswordField promptText="Пароль" styleClass="input-field" />
+
+            <Label styleClass="forgot-label" text="Забыли пароль?" />
+            <Button mnemonicParsing="false" onAction="#handleLogin" styleClass="action-btn" text="ВОЙТИ" />
+        </VBox>
+    </AnchorPane>
+
+    <AnchorPane fx:id="overlayContainer" prefHeight="600.0" prefWidth="900.0" pickOnBounds="false">
+        <VBox fx:id="overlay" alignment="CENTER" layoutX="0.0" prefHeight="600.0" prefWidth="450.0" spacing="20.0" styleClass="overlay-panel">
+
+            <Label fx:id="lblOverlayTitle" styleClass="overlay-title" textFill="WHITE" />
+            <Label fx:id="lblOverlaySub" styleClass="overlay-sub" textFill="WHITE" wrapText="true" />
+
+            <Button fx:id="btnOverlay" mnemonicParsing="false" onAction="#toggleScreens" styleClass="ghost-btn" />
+        </VBox>
+    </AnchorPane>
 
     <ImageView fx:id="logoImageView" />
-
-
-    <VBox fx:id="mainContent" alignment="CENTER" spacing="50">
-
-        <VBox fx:id="buttonsContainer" alignment="CENTER" spacing="20">
-            <Button fx:id="registerButton" text="Зарегистрироваться" onAction="#handleRegister" />
-            <Button fx:id="loginButton" text="Войти" onAction="#handleLogin" />
-        </VBox>
-    </VBox>
 
 </StackPane>
