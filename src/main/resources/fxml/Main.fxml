@@ -1,24 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="mainContainer" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<StackPane fx:id="mainContainer"
+           xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.example.tetoo.gui.controllers.MainController">
 
+    <ImageView fx:id="logoImageView"/>
 
-    <ImageView fx:id="logoImageView" />
+    <VBox fx:id="mainContent"
+          alignment="CENTER"
+          spacing="40">
 
+        <!-- КНОПКИ -->
+        <VBox fx:id="buttonsContainer"
+              alignment="CENTER"
+              spacing="20">
 
-    <VBox fx:id="mainContent" alignment="CENTER" spacing="50">
+            <Button fx:id="registerButton"
+                    text="Зарегистрироваться"
+                    onAction="#handleRegister"/>
 
-        <VBox fx:id="buttonsContainer" alignment="CENTER" spacing="20">
-            <Button fx:id="registerButton" text="Зарегистрироваться" onAction="#handleRegister" />
-            <Button fx:id="loginButton" text="Войти" onAction="#handleLogin" />
+            <Button fx:id="loginButton"
+                    text="Войти"
+                    onAction="#handleLogin"/>
         </VBox>
+
+        <!-- ФОРМА РЕГИСТРАЦИИ -->
+        <VBox fx:id="registerForm"
+              alignment="CENTER"
+              spacing="15"
+              visible="false"
+              managed="false">
+
+            <TextField fx:id="loginField"
+                       promptText="Никнейм"/>
+
+            <PasswordField fx:id="passwordField"
+                           promptText="Пароль"/>
+
+            <Button text="Подтвердить"
+                    onAction="#handleRegisterSubmit"/>
+
+            <!-- КНОПКА НАЗАД -->
+            <Button text="Назад"
+                    onAction="#handleBack"/>
+        </VBox>
+
     </VBox>
 
 </StackPane>

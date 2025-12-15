@@ -1,0 +1,215 @@
+Ñòðóêòóðà ïàïîê
+Ñåðèéíûé íîìåð òîìà: 46C5-07F3
+C:.
+¦   .gitignore
+¦   list.txt
+¦   mvnw
+¦   mvnw.cmd
+¦   pom.xml
+¦   
++---.idea
+¦       .gitignore
+¦       encodings.xml
+¦       misc.xml
+¦       vcs.xml
+¦       
++---.mvn
+¦   L---wrapper
+¦           maven-wrapper.jar
+¦           maven-wrapper.properties
+¦           
++---src
+¦   L---main
+¦       +---java
+¦       ¦   ¦   module-info.java
+¦       ¦   ¦   
+¦       ¦   L---com
+¦       ¦       L---example
+¦       ¦           L---tetoo
+¦       ¦               +---app
+¦       ¦               ¦       Main.java
+¦       ¦               ¦       
+¦       ¦               +---gui
+¦       ¦               ¦   +---controllers
+¦       ¦               ¦   ¦   ¦   ChatsController.java
+¦       ¦               ¦   ¦   ¦   InfoController.java
+¦       ¦               ¦   ¦   ¦   MainController.java
+¦       ¦               ¦   ¦   ¦   ProfileController.java
+¦       ¦               ¦   ¦   ¦   ProfilesController.java
+¦       ¦               ¦   ¦   ¦   RegistrationController.java
+¦       ¦               ¦   ¦   ¦   TestsController.java
+¦       ¦               ¦   ¦   ¦   
+¦       ¦               ¦   ¦   +---anim
+¦       ¦               ¦   ¦   ¦       BackgroundAnimator.java
+¦       ¦               ¦   ¦   ¦       
+¦       ¦               ¦   ¦   L---ui
+¦       ¦               ¦   ¦           ButtonStyler.java
+¦       ¦               ¦   ¦           LogoLoader.java
+¦       ¦               ¦   ¦           
+¦       ¦               ¦   L---views
+¦       ¦               ¦           SplashScreen.java
+¦       ¦               ¦           
+¦       ¦               +---model
+¦       ¦               ¦       Chat.java
+¦       ¦               ¦       Message.java
+¦       ¦               ¦       Test.java
+¦       ¦               ¦       User.java
+¦       ¦               ¦       
+¦       ¦               +---network
+¦       ¦               ¦   +---http
+¦       ¦               ¦   ¦       HttpClient.java
+¦       ¦               ¦   ¦       HttpServer.java
+¦       ¦               ¦   ¦       
+¦       ¦               ¦   L---socket
+¦       ¦               ¦           SocketClient.java
+¦       ¦               ¦           SocketServer.java
+¦       ¦               ¦           
+¦       ¦               +---repository
+¦       ¦               ¦       ChatRepository.java
+¦       ¦               ¦       MessageRepository.java
+¦       ¦               ¦       TestRepository.java
+¦       ¦               ¦       UserRepository.java
+¦       ¦               ¦       
+¦       ¦               +---service
+¦       ¦               ¦   ¦   AdminService.java
+¦       ¦               ¦   ¦   ChatService.java
+¦       ¦               ¦   ¦   TestService.java
+¦       ¦               ¦   ¦   UserService.java
+¦       ¦               ¦   ¦   
+¦       ¦               ¦   L---interfaces
+¦       ¦               ¦           IChatService.java
+¦       ¦               ¦           ITestService.java
+¦       ¦               ¦           IUserService.java
+¦       ¦               ¦           
+¦       ¦               L---util
+¦       ¦                       Constants.java
+¦       ¦                       FontLoader.java
+¦       ¦                       LoggerFactory.java
+¦       ¦                       ResourceTester.java
+¦       ¦                       Validators.java
+¦       ¦                       
+¦       L---resources
+¦           +---fonts
+¦           ¦       Gothra.ttf
+¦           ¦       
+¦           +---fxml
+¦           ¦       Chats.fxml
+¦           ¦       Info.fxml
+¦           ¦       Main.fxml
+¦           ¦       Profile.fxml
+¦           ¦       Profiles.fxml
+¦           ¦       Registration.fxml
+¦           ¦       Tests.fxml
+¦           ¦       
+¦           +---images
+¦           ¦       tetoo_icon.png
+¦           ¦       tetoo_logo.png
+¦           ¦       
+¦           +---styles
+¦           ¦       main.css
+¦           ¦       
+¦           L---videos
+¦                   tetoo_logo.H264
+¦                   tetoo_logo.mp4
+¦                   
+L---target
+    +---classes
+    ¦   ¦   module-info.class
+    ¦   ¦   
+    ¦   +---com
+    ¦   ¦   L---example
+    ¦   ¦       L---tetoo
+    ¦   ¦           +---app
+    ¦   ¦           ¦       Main.class
+    ¦   ¦           ¦       
+    ¦   ¦           +---gui
+    ¦   ¦           ¦   +---controllers
+    ¦   ¦           ¦   ¦   ¦   ChatsController.class
+    ¦   ¦           ¦   ¦   ¦   InfoController.class
+    ¦   ¦           ¦   ¦   ¦   MainController.class
+    ¦   ¦           ¦   ¦   ¦   ProfileController.class
+    ¦   ¦           ¦   ¦   ¦   ProfilesController.class
+    ¦   ¦           ¦   ¦   ¦   RegistrationController.class
+    ¦   ¦           ¦   ¦   ¦   TestsController.class
+    ¦   ¦           ¦   ¦   ¦   
+    ¦   ¦           ¦   ¦   +---anim
+    ¦   ¦           ¦   ¦   ¦       BackgroundAnimator.class
+    ¦   ¦           ¦   ¦   ¦       
+    ¦   ¦           ¦   ¦   L---ui
+    ¦   ¦           ¦   ¦           ButtonStyler.class
+    ¦   ¦           ¦   ¦           LogoLoader.class
+    ¦   ¦           ¦   ¦           
+    ¦   ¦           ¦   L---views
+    ¦   ¦           ¦           SplashScreen.class
+    ¦   ¦           ¦           
+    ¦   ¦           +---model
+    ¦   ¦           ¦       Chat.class
+    ¦   ¦           ¦       Message.class
+    ¦   ¦           ¦       Test.class
+    ¦   ¦           ¦       User.class
+    ¦   ¦           ¦       
+    ¦   ¦           +---network
+    ¦   ¦           ¦   +---http
+    ¦   ¦           ¦   ¦       HttpClient.class
+    ¦   ¦           ¦   ¦       HttpServer.class
+    ¦   ¦           ¦   ¦       
+    ¦   ¦           ¦   L---socket
+    ¦   ¦           ¦           SocketClient.class
+    ¦   ¦           ¦           SocketServer.class
+    ¦   ¦           ¦           
+    ¦   ¦           +---repository
+    ¦   ¦           ¦       ChatRepository.class
+    ¦   ¦           ¦       MessageRepository.class
+    ¦   ¦           ¦       TestRepository.class
+    ¦   ¦           ¦       UserRepository.class
+    ¦   ¦           ¦       
+    ¦   ¦           +---service
+    ¦   ¦           ¦   ¦   AdminService.class
+    ¦   ¦           ¦   ¦   ChatService.class
+    ¦   ¦           ¦   ¦   TestService.class
+    ¦   ¦           ¦   ¦   UserService.class
+    ¦   ¦           ¦   ¦   
+    ¦   ¦           ¦   L---interfaces
+    ¦   ¦           ¦           IChatService.class
+    ¦   ¦           ¦           ITestService.class
+    ¦   ¦           ¦           IUserService.class
+    ¦   ¦           ¦           
+    ¦   ¦           L---util
+    ¦   ¦                   Constants.class
+    ¦   ¦                   FontLoader.class
+    ¦   ¦                   LoggerFactory.class
+    ¦   ¦                   ResourceTester.class
+    ¦   ¦                   Validators.class
+    ¦   ¦                   
+    ¦   +---fonts
+    ¦   ¦       Gothra.ttf
+    ¦   ¦       
+    ¦   +---fxml
+    ¦   ¦       Chats.fxml
+    ¦   ¦       Info.fxml
+    ¦   ¦       Main.fxml
+    ¦   ¦       Profile.fxml
+    ¦   ¦       Profiles.fxml
+    ¦   ¦       Registration.fxml
+    ¦   ¦       Tests.fxml
+    ¦   ¦       
+    ¦   +---images
+    ¦   ¦       tetoo_icon.png
+    ¦   ¦       tetoo_logo.png
+    ¦   ¦       
+    ¦   +---styles
+    ¦   ¦       main.css
+    ¦   ¦       
+    ¦   L---videos
+    ¦           tetoo_logo.H264
+    ¦           tetoo_logo.mp4
+    ¦           
+    +---generated-sources
+    ¦   L---annotations
+    L---maven-status
+        L---maven-compiler-plugin
+            L---compile
+                L---default-compile
+                        createdFiles.lst
+                        inputFiles.lst
+                        
