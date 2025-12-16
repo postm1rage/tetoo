@@ -1,97 +1,107 @@
 package com.example.tetoo.gui.controllers;
 
-import com.example.tetoo.gui.controllers.anim.BackgroundAnimator;
-import com.example.tetoo.gui.controllers.ui.ButtonStyler;
-import com.example.tetoo.gui.controllers.ui.LogoLoader;
-import com.example.tetoo.util.FontLoader;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
+import javafx.animation.Interpolator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
-    @FXML private StackPane mainContainer;
-    @FXML private ImageView logoImageView;
+    @FXML
+    private StackPane mainContainer;
+    @FXML
+    private ImageView logoImageView;
 
-    @FXML private VBox mainContent;
-    @FXML private VBox buttonsContainer;
-    @FXML private VBox registerForm;
+    @FXML
+    private VBox overlay;
+    @FXML
+    private Label lblOverlayTitle;
+    @FXML
+    private Label lblOverlaySub;
+    @FXML
+    private Button btnOverlay;
 
-    @FXML private Button registerButton;
-    @FXML private Button loginButton;
-
-    @FXML private TextField loginField;
-    @FXML private PasswordField passwordField;
-
-    private BackgroundAnimator backgroundAnimator;
+    private boolean isSignInActive = true;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FontLoader.loadCustomFont();
 
-        backgroundAnimator = new BackgroundAnimator(mainContainer, mainContent, logoImageView);
-        backgroundAnimator.play();
-
-        ButtonStyler.setupButtonStyles(registerButton, loginButton, mainContent, buttonsContainer);
-        LogoLoader.loadLogo(logoImageView);
+        overlay.setTranslateX(450);
+        setOverlayContentForSignIn();
+        loadLogo();
     }
 
+    private void loadLogo() {
+        try {
+
+            Image logo = new Image(getClass().getResourceAsStream("/images/tetoo_logo.png"));
+            logoImageView.setImage(logo);
+
+
+            logoImageView.setFitWidth(100);
+            logoImageView.setFitHeight(100);
+
+            logoImageView.setPreserveRatio(true);
+            StackPane.setAlignment(logoImageView, Pos.TOP_LEFT);
+            StackPane.setMargin(logoImageView, new Insets(25, 0, 0, 25));
+        } catch (Exception e) {
+            System.err.println("Не удалось загрузить логотип: " + e.getMessage());
+            logoImageView.setVisible(false);
+        }
+    }
+
+
     @FXML
-    private void handleRegister() {
-        ButtonStyler.animateClick(registerButton);
+    private void toggleScreens() {
+        TranslateTransition slide = new TranslateTransition(Duration.seconds(0.7), overlay);
+        slide.setInterpolator(Interpolator.EASE_BOTH);
 
-        buttonsContainer.setVisible(false);
-        buttonsContainer.setManaged(false);
+        if (isSignInActive) {
+            // Переход к РЕГИСТРАЦИИ (оверлей едет влево)
+            slide.setToX(0);
+            isSignInActive = false;
+            slide.setOnFinished(e -> setOverlayContentForSignUp());
+        } else {
+            // Переход ко ВХОДУ (оверлей едет вправо)
+            slide.setToX(450);
+            isSignInActive = true;
+            slide.setOnFinished(e -> setOverlayContentForSignIn());
+        }
 
-        registerForm.setVisible(true);
-        registerForm.setManaged(true);
+        slide.play();
+    }
+
+    private void setOverlayContentForSignIn() {
+        lblOverlayTitle.setText("Привет, друг!");
+        lblOverlaySub.setText("");
+        btnOverlay.setText("ЗАРЕГИСТРИРОВАТЬСЯ");
+    }
+
+    private void setOverlayContentForSignUp() {
+        lblOverlayTitle.setText("С возвращением!");
+        lblOverlaySub.setText("");
+        btnOverlay.setText("ВОЙТИ");
     }
 
     @FXML
     private void handleLogin() {
-        ButtonStyler.animateClick(loginButton);
-
-        // пока делаем то же самое, потом разведёшь
-        buttonsContainer.setVisible(false);
-        buttonsContainer.setManaged(false);
-
-        registerForm.setVisible(true);
-        registerForm.setManaged(true);
+        System.out.println("Логика входа...");
     }
 
     @FXML
-    private void handleBack() {
-        registerForm.setVisible(false);
-        registerForm.setManaged(false);
-
-        buttonsContainer.setVisible(true);
-        buttonsContainer.setManaged(true);
-
-        loginField.clear();
-        passwordField.clear();
-    }
-
-
-    @FXML
-    private void handleRegisterSubmit() {
-        String login = loginField.getText();
-        String password = passwordField.getText();
-
-        System.out.println("LOGIN = " + login);
-        System.out.println("PASSWORD = " + password);
-    }
-
-    public void stopAnimations() {
-        if (backgroundAnimator != null) {
-            backgroundAnimator.stop();
-        }
+    private void handleRegister() {
+        System.out.println("Логика регистрации...");
     }
 }

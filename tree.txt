@@ -1,0 +1,145 @@
+Ñòðóêòóðà ïàïîê
+Ñåðèéíûé íîìåð òîìà: 46C5-07F3
+C:.
+¦   .gitignore
+¦   mvnw
+¦   mvnw.cmd
+¦   pom.xml
+¦   tree.txt
+¦   
++---.idea
+¦       .gitignore
+¦       encodings.xml
+¦       misc.xml
+¦       vcs.xml
+¦       
++---.mvn
+¦   L---wrapper
+¦           maven-wrapper.jar
+¦           maven-wrapper.properties
+¦           
++---src
+¦   L---main
+¦       +---java
+¦       ¦   ¦   module-info.java
+¦       ¦   ¦   
+¦       ¦   L---com
+¦       ¦       L---example
+¦       ¦           L---tetoo
+¦       ¦               +---app
+¦       ¦               ¦       Main.java
+¦       ¦               ¦       
+¦       ¦               +---config
+¦       ¦               ¦       SupabaseConfig.java
+¦       ¦               ¦       
+¦       ¦               +---gui
+¦       ¦               ¦   +---controllers
+¦       ¦               ¦   ¦       ChatsController.java
+¦       ¦               ¦   ¦       InfoController.java
+¦       ¦               ¦   ¦       MainController.java
+¦       ¦               ¦   ¦       ProfileController.java
+¦       ¦               ¦   ¦       ProfilesController.java
+¦       ¦               ¦   ¦       RegistrationController.java
+¦       ¦               ¦   ¦       TestsController.java
+¦       ¦               ¦   ¦       
+¦       ¦               ¦   L---views
+¦       ¦               ¦           SplashScreen.java
+¦       ¦               ¦           
+¦       ¦               +---model
+¦       ¦               ¦       Chat.java
+¦       ¦               ¦       Message.java
+¦       ¦               ¦       Test.java
+¦       ¦               ¦       User.java
+¦       ¦               ¦       
+¦       ¦               +---network
+¦       ¦               ¦   +---http
+¦       ¦               ¦   ¦       HttpClient.java
+¦       ¦               ¦   ¦       HttpServer.java
+¦       ¦               ¦   ¦       
+¦       ¦               ¦   L---socket
+¦       ¦               ¦           SocketClient.java
+¦       ¦               ¦           SocketServer.java
+¦       ¦               ¦           
+¦       ¦               +---repository
+¦       ¦               ¦       ChatRepository.java
+¦       ¦               ¦       MessageRepository.java
+¦       ¦               ¦       TestRepository.java
+¦       ¦               ¦       UserRepository.java
+¦       ¦               ¦       
+¦       ¦               +---service
+¦       ¦               ¦   ¦   AdminService.java
+¦       ¦               ¦   ¦   ChatService.java
+¦       ¦               ¦   ¦   SupabaseService.java
+¦       ¦               ¦   ¦   TestService.java
+¦       ¦               ¦   ¦   
+¦       ¦               ¦   L---interfaces
+¦       ¦               ¦           IChatService.java
+¦       ¦               ¦           ITestService.java
+¦       ¦               ¦           IUserService.java
+¦       ¦               ¦           
+¦       ¦               +---Sup
+¦       ¦               L---util
+¦       ¦                       Constants.java
+¦       ¦                       FontLoader.java
+¦       ¦                       LoggerFactory.java
+¦       ¦                       ResourceTester.java
+¦       ¦                       Validators.java
+¦       ¦                       
+¦       L---resources
+¦           +---fonts
+¦           ¦       Gothra.ttf
+¦           ¦       
+¦           +---fxml
+¦           ¦       Chats.fxml
+¦           ¦       Info.fxml
+¦           ¦       Main.fxml
+¦           ¦       Profile.fxml
+¦           ¦       Profiles.fxml
+¦           ¦       Registration.fxml
+¦           ¦       Tests.fxml
+¦           ¦       
+¦           +---images
+¦           ¦       tetoo_icon.png
+¦           ¦       tetoo_logo.png
+¦           ¦       
+¦           +---styles
+¦           ¦       main.css
+¦           ¦       
+¦           L---videos
+¦                   tetoo_logo.H264
+¦                   tetoo_logo.mp4
+¦                   
+L---target
+    +---classes
+    ¦   +---fonts
+    ¦   ¦       Gothra.ttf
+    ¦   ¦       
+    ¦   +---fxml
+    ¦   ¦       Chats.fxml
+    ¦   ¦       Info.fxml
+    ¦   ¦       Main.fxml
+    ¦   ¦       Profile.fxml
+    ¦   ¦       Profiles.fxml
+    ¦   ¦       Registration.fxml
+    ¦   ¦       Tests.fxml
+    ¦   ¦       
+    ¦   +---images
+    ¦   ¦       tetoo_icon.png
+    ¦   ¦       tetoo_logo.png
+    ¦   ¦       
+    ¦   +---styles
+    ¦   ¦       main.css
+    ¦   ¦       
+    ¦   L---videos
+    ¦           tetoo_logo.H264
+    ¦           tetoo_logo.mp4
+    ¦           
+    +---generated-sources
+    ¦   L---annotations
+    L---maven-status
+        L---maven-compiler-plugin
+            L---compile
+                L---default-compile
+                        createdFiles.lst
+                        inputFiles.lst
+                        

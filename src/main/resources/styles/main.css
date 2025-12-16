@@ -1,44 +1,112 @@
 
 .root {
-    -fx-font-family: 'Gothra';
+
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-background-color: white;
 }
 
+/* --- СТИЛИ ФОРМ И ПОЛЕЙ --- */
 
-.text {
-    -fx-font-smoothing-type: gray;
+.form-box {
+    -fx-alignment: center;
+    -fx-padding: 40px;
+    -fx-background-color: white;
 }
 
-.label {
-    -fx-font-smoothing-type: gray;
+.title-label {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-padding: 0 0 10px 0;
 }
 
-
-.text-field {
-    -fx-background-color: rgba(255,255,255,0.1);
-    -fx-background-radius: 10;
-    -fx-border-color: rgba(236,75,110,0.3);
-    -fx-border-radius: 10;
-    -fx-border-width: 1;
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255,255,255,0.5);
-    -fx-padding: 10 15;
-    -fx-font-size: 14px;
+.small-text {
+    -fx-font-size: 14.5px;
+    -fx-text-fill: #888;
+    -fx-padding: 0 0 10px 0;
 }
 
-.text-field:focused {
+.forgot-label {
+    -fx-font-size: 14.5px;
+    -fx-text-fill: #333;
+    -fx-cursor: hand;
+    -fx-padding: -15px 0 15px 0;
+}
+
+/* Поля ввода */
+.input-field {
+    -fx-background-color: #eee;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8;
+    -fx-border-width: 0;
+    -fx-text-fill: #333;
+    -fx-prompt-text-fill: #888;
+    -fx-padding: 13 20;
+    -fx-font-size: 16px;
+    -fx-pref-width: 300px;
+}
+
+.input-field:focused {
     -fx-border-color: #ec4b6e;
-    -fx-effect: dropshadow(gaussian, rgba(236,75,110,0.3), 10, 0, 0, 0);
+    -fx-border-width: 1;
 }
 
-/* Стили для пароля */
-.password-field {
-    -fx-background-color: rgba(255,255,255,0.1);
-    -fx-background-radius: 10;
-    -fx-border-color: rgba(236,75,110,0.3);
-    -fx-border-radius: 10;
-    -fx-border-width: 1;
+
+
+/* Основная кнопка (ВОЙТИ / ЗАРЕГИСТРИРОВАТЬСЯ) */
+.action-btn {
+    -fx-background-color: #ec4b6e;
+    -fx-background-radius: 8;
     -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255,255,255,0.5);
-    -fx-padding: 10 15;
-    -fx-font-size: 14px;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-pref-width: 300px;
+    -fx-pref-height: 48px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 0);
+    -fx-transition: all 0.2s ease;
+}
+.action-btn:hover {
+    -fx-background-color: #ff6b8b;
+}
+
+/* Кнопка на оверлее (ПРОЗРАЧНАЯ/GHOST) */
+.ghost-btn {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-border-color: white;
+    -fx-border-radius: 8;
+    -fx-border-width: 2;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-pref-width: 240px;
+    -fx-pref-height: 46px;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease;
+}
+.ghost-btn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- СТИЛИ OVERLAY (РОЗОВЫЙ ФОН) --- */
+.overlay-panel {
+    /* ГРАДИЕНТ */
+    -fx-background-color: linear-gradient(to bottom right, #ec4b6e, #d64062);
+    -fx-alignment: center;
+    -fx-padding: 40px;
+}
+
+.overlay-title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 0 0 10px 0;
+}
+
+.overlay-sub {
+    -fx-font-size: 14.5px;
+    -fx-text-fill: white;
+    -fx-padding: 15px 0 20px 0;
 }

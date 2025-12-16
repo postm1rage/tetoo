@@ -21,16 +21,18 @@ public class SplashScreen {
 
     public void show() {
         StackPane root = new StackPane();
+
         root.setStyle("-fx-background-color: #ec4b6e;");
 
-        // Просто показываем логотип
         try {
+
             Image logo = new Image(getClass().getResourceAsStream("/images/tetoo_logo.png"));
             ImageView logoView = new ImageView(logo);
+
             logoView.setFitWidth(400);
             logoView.setFitHeight(400);
             logoView.setPreserveRatio(true);
-            logoView.setOpacity(0); // Начинаем невидимым
+            logoView.setOpacity(0);
 
             StackPane.setAlignment(logoView, Pos.CENTER);
             root.getChildren().add(logoView);
@@ -40,31 +42,32 @@ public class SplashScreen {
             fadeIn.setToValue(1);
             fadeIn.play();
 
+
+            FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), root);
+            fadeOut.setDelay(Duration.seconds(2));
+            fadeOut.setToValue(0);
+            fadeOut.setOnFinished(e -> onComplete.run());
+            fadeOut.play();
+
         } catch (Exception e) {
-            System.err.println("Не удалось загрузить логотип");
+            System.err.println("Не удалось загрузить логотип tetoo_logo.png: " + e.getMessage());
+            onComplete.run();
         }
 
-        // Сцена
+
         Scene scene = new Scene(root, 800, 600);
-        stage.initStyle(StageStyle.UNDECORATED);
+        stage.initStyle(StageStyle.UNDECORATED); // Сплэшскрин без рамок
         stage.setScene(scene);
 
-        // Иконка
+
         try {
             stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/tetoo_icon.png")));
         } catch (Exception e) {
-            System.err.println("Не удалось загрузить иконку");
+            System.err.println("Не удалось загрузить иконку окна");
         }
 
         stage.centerOnScreen();
         stage.show();
-
-
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), root);
-        fadeOut.setDelay(Duration.seconds(2));
-        fadeOut.setToValue(0);
-        fadeOut.setOnFinished(e -> onComplete.run());
-        fadeOut.play();
     }
 
     public void stop() {
