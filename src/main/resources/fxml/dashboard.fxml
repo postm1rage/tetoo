@@ -54,6 +54,7 @@
 
             <!-- Navigation Buttons -->
             <VBox spacing="5.0">
+                <!-- My Profile -->
                 <Button fx:id="profileBtn" mnemonicParsing="false" onAction="#showProfile" 
                         styleClass="nav-btn" text="My Profile">
                     <graphic>
@@ -63,6 +64,17 @@
                     </graphic>
                 </Button>
                 
+                <!-- Chats -->
+                <Button fx:id="chatsBtn" mnemonicParsing="false" onAction="#showChats" 
+                        styleClass="nav-btn" text="Chats">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                            <Image url="@../icons/chat_icon.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+                
+                <!-- Discover/Search -->
                 <Button fx:id="discoverBtn" mnemonicParsing="false" onAction="#showDiscover" 
                         styleClass="nav-btn" text="Discover">
                     <graphic>
@@ -72,8 +84,9 @@
                     </graphic>
                 </Button>
                 
-                <Button fx:id="matchesBtn" mnemonicParsing="false" onAction="#showMatches" 
-                        styleClass="nav-btn" text="Matches">
+                <!-- Likes -->
+                <Button fx:id="likesBtn" mnemonicParsing="false" onAction="#showLikes" 
+                        styleClass="nav-btn" text="Likes">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
                             <Image url="@../icons/heart_icon.png" />
@@ -81,20 +94,22 @@
                     </graphic>
                 </Button>
                 
-                <Button fx:id="messagesBtn" mnemonicParsing="false" onAction="#showMessages" 
-                        styleClass="nav-btn" text="Messages">
+                <!-- Matches -->
+                <Button fx:id="matchesBtn" mnemonicParsing="false" onAction="#showMatches" 
+                        styleClass="nav-btn" text="Matches">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
-                            <Image url="@../icons/chat_icon.png" />
+                            <Image url="@../icons/match_icon.png" />
                         </ImageView>
                     </graphic>
                 </Button>
                 
-                <Button fx:id="settingsBtn" mnemonicParsing="false" onAction="#showSettings" 
-                        styleClass="nav-btn" text="Settings">
+                <!-- Notifications -->
+                <Button fx:id="notificationsBtn" mnemonicParsing="false" onAction="#showNotifications" 
+                        styleClass="nav-btn" text="Notifications">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
-                            <Image url="@../icons/settings_icon.png" />
+                            <Image url="@../icons/bell_icon.png" />
                         </ImageView>
                     </graphic>
                 </Button>
@@ -106,51 +121,75 @@
     <center>
         <StackPane fx:id="contentArea" styleClass="content-area">
             <!-- Default content (Profile) -->
-            <VBox alignment="CENTER" spacing="20.0">
-                <Label text="Welcome to TETOO Dashboard" styleClass="content-title" />
-                <Label fx:id="defaultContentLabel" text="Select a section from the navigation" 
-                       styleClass="content-subtitle" />
+            <VBox alignment="TOP_LEFT" spacing="20.0" style="-fx-padding: 20;">
                 
                 <!-- Profile content (default) -->
-                <VBox fx:id="profileContent" alignment="CENTER" spacing="15.0" visible="true">
+                <VBox fx:id="profileContent" spacing="15.0" visible="true">
                     <Label text="My Profile" styleClass="section-title" />
-                    <Label fx:id="profileInfoLabel" text="Profile information will appear here" 
-                           styleClass="info-text" />
+                    <HBox spacing="20.0" alignment="CENTER_LEFT">
+                        <ImageView fx:id="profileAvatar" fitHeight="100" fitWidth="100" 
+                                   preserveRatio="true" styleClass="profile-avatar" />
+                        <VBox spacing="5.0">
+                            <Label fx:id="profileName" styleClass="profile-name" />
+                            <Label fx:id="profileAgeLocation" styleClass="profile-info" />
+                            <Label fx:id="profileRelationshipGoal" styleClass="profile-info" />
+                        </VBox>
+                    </HBox>
                     <Button mnemonicParsing="false" onAction="#handleEditProfile" 
                             styleClass="action-btn" text="Edit Profile" />
                 </VBox>
                 
+                <!-- Chats content (hidden by default) -->
+                <VBox fx:id="chatsContent" spacing="15.0" visible="false">
+                    <Label text="Chats" styleClass="section-title" />
+                    <Label text="Your conversations will appear here" styleClass="info-text" />
+                    <Button mnemonicParsing="false" onAction="#handleLoadChats" 
+                            styleClass="action-btn" text="Load Chats" />
+                </VBox>
+                
                 <!-- Discover content (hidden by default) -->
-                <VBox fx:id="discoverContent" alignment="CENTER" spacing="15.0" visible="false">
+                <VBox fx:id="discoverContent" spacing="15.0" visible="false">
                     <Label text="Discover People" styleClass="section-title" />
                     <Label text="Find and connect with new people" styleClass="info-text" />
                     <Button mnemonicParsing="false" onAction="#handleStartDiscovery" 
                             styleClass="action-btn" text="Start Discovery" />
                 </VBox>
                 
+                <!-- Likes content (hidden by default) -->
+                <VBox fx:id="likesContent" spacing="15.0" visible="false">
+                    <Label text="Likes" styleClass="section-title" />
+                    <HBox spacing="20.0">
+                        <VBox spacing="10.0" styleClass="likes-section">
+                            <Label text="Received Likes" styleClass="subsection-title" />
+                            <Label fx:id="receivedLikesCount" text="0" styleClass="likes-count" />
+                            <Button mnemonicParsing="false" onAction="#handleViewReceivedLikes" 
+                                    styleClass="secondary-btn" text="View All" />
+                        </VBox>
+                        <VBox spacing="10.0" styleClass="likes-section">
+                            <Label text="Sent Likes" styleClass="subsection-title" />
+                            <Label fx:id="sentLikesCount" text="0" styleClass="likes-count" />
+                            <Button mnemonicParsing="false" onAction="#handleViewSentLikes" 
+                                    styleClass="secondary-btn" text="View All" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+                
                 <!-- Matches content (hidden by default) -->
-                <VBox fx:id="matchesContent" alignment="CENTER" spacing="15.0" visible="false">
-                    <Label text="My Matches" styleClass="section-title" />
+                <VBox fx:id="matchesContent" spacing="15.0" visible="false">
+                    <Label text="Matches" styleClass="section-title" />
                     <Label text="People you've matched with" styleClass="info-text" />
                     <Button mnemonicParsing="false" onAction="#handleViewMatches" 
                             styleClass="action-btn" text="View All Matches" />
                 </VBox>
                 
-                <!-- Messages content (hidden by default) -->
-                <VBox fx:id="messagesContent" alignment="CENTER" spacing="15.0" visible="false">
-                    <Label text="Messages" styleClass="section-title" />
-                    <Label text="Your conversations" styleClass="info-text" />
-                    <Button mnemonicParsing="false" onAction="#handleViewMessages" 
-                            styleClass="action-btn" text="Open Messages" />
+                <!-- Notifications content (hidden by default) -->
+                <VBox fx:id="notificationsContent" spacing="15.0" visible="false">
+                    <Label text="Notifications" styleClass="section-title" />
+                    <Label text="Your notifications will appear here" styleClass="info-text" />
+                    <Button mnemonicParsing="false" onAction="#handleMarkAllAsRead" 
+                            styleClass="action-btn" text="Mark All as Read" />
                 </VBox>
                 
-                <!-- Settings content (hidden by default) -->
-                <VBox fx:id="settingsContent" alignment="CENTER" spacing="15.0" visible="false">
-                    <Label text="Settings" styleClass="section-title" />
-                    <Label text="Application settings" styleClass="info-text" />
-                    <Button mnemonicParsing="false" onAction="#handleOpenSettings" 
-                            styleClass="action-btn" text="Open Settings" />
-                </VBox>
             </VBox>
         </StackPane>
     </center>

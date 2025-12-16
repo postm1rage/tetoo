@@ -23,23 +23,29 @@ public class DashboardController implements Initializable {
     @FXML private Label userNameLabel;
     @FXML private Label userEmailLabel;
     @FXML private Label statusLabel;
-    @FXML private Label defaultContentLabel;
-    @FXML private Label profileInfoLabel;
+    @FXML private Label profileName;
+    @FXML private Label profileAgeLocation;
+    @FXML private Label profileRelationshipGoal;
+    @FXML private Label receivedLikesCount;
+    @FXML private Label sentLikesCount;
     
     @FXML private Button logoutBtn;
     @FXML private Button profileBtn;
+    @FXML private Button chatsBtn;
     @FXML private Button discoverBtn;
+    @FXML private Button likesBtn;
     @FXML private Button matchesBtn;
-    @FXML private Button messagesBtn;
-    @FXML private Button settingsBtn;
+    @FXML private Button notificationsBtn;
     
     @FXML private ImageView userAvatar;
+    @FXML private ImageView profileAvatar;
     
     @FXML private VBox profileContent;
+    @FXML private VBox chatsContent;
     @FXML private VBox discoverContent;
+    @FXML private VBox likesContent;
     @FXML private VBox matchesContent;
-    @FXML private VBox messagesContent;
-    @FXML private VBox settingsContent;
+    @FXML private VBox notificationsContent;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -66,18 +72,20 @@ public class DashboardController implements Initializable {
             userNameLabel.setText(name);
             userEmailLabel.setText(email);
             
+            // Profile info
+            profileName.setText(name);
+            profileAgeLocation.setText("Age: Unknown • Location: Unknown");
+            profileRelationshipGoal.setText("Looking for: Unknown");
+            
             // Load avatar if available
             try {
                 Image avatar = new Image(getClass().getResourceAsStream("/images/default_avatar.png"));
                 userAvatar.setImage(avatar);
+                profileAvatar.setImage(avatar);
             } catch (Exception e) {
                 System.err.println("Could not load default avatar: " + e.getMessage());
             }
             
-            // Update profile info
-            profileInfoLabel.setText("Email: " + email + "\nMember since: " + 
-                                   (currentUser.getCreated_at() != null ? 
-                                    currentUser.getCreated_at().substring(0, 10) : "Recently"));
         } else {
             // No user logged in - go back to login screen
             System.out.println("No user in session, returning to login");
@@ -86,7 +94,6 @@ public class DashboardController implements Initializable {
     }
     
     private void setupNavigation() {
-        // Reset all buttons
         resetNavButtons();
         profileBtn.getStyleClass().add("nav-btn-active");
     }
@@ -95,18 +102,20 @@ public class DashboardController implements Initializable {
         String activeStyle = "nav-btn-active";
         
         profileBtn.getStyleClass().remove(activeStyle);
+        chatsBtn.getStyleClass().remove(activeStyle);
         discoverBtn.getStyleClass().remove(activeStyle);
+        likesBtn.getStyleClass().remove(activeStyle);
         matchesBtn.getStyleClass().remove(activeStyle);
-        messagesBtn.getStyleClass().remove(activeStyle);
-        settingsBtn.getStyleClass().remove(activeStyle);
+        notificationsBtn.getStyleClass().remove(activeStyle);
     }
     
     private void hideAllContent() {
         profileContent.setVisible(false);
+        chatsContent.setVisible(false);
         discoverContent.setVisible(false);
+        likesContent.setVisible(false);
         matchesContent.setVisible(false);
-        messagesContent.setVisible(false);
-        settingsContent.setVisible(false);
+        notificationsContent.setVisible(false);
     }
     
     @FXML
@@ -117,8 +126,18 @@ public class DashboardController implements Initializable {
         
         hideAllContent();
         profileContent.setVisible(true);
-        defaultContentLabel.setText("Profile Section");
         statusLabel.setText("Viewing profile");
+    }
+    
+    @FXML
+    private void showChats() {
+        System.out.println("Showing chats");
+        resetNavButtons();
+        chatsBtn.getStyleClass().add("nav-btn-active");
+        
+        hideAllContent();
+        chatsContent.setVisible(true);
+        statusLabel.setText("Viewing chats");
     }
     
     @FXML
@@ -129,8 +148,19 @@ public class DashboardController implements Initializable {
         
         hideAllContent();
         discoverContent.setVisible(true);
-        defaultContentLabel.setText("Discover Section");
         statusLabel.setText("Discovering new people");
+    }
+    
+    @FXML
+    private void showLikes() {
+        System.out.println("Showing likes");
+        resetNavButtons();
+        likesBtn.getStyleClass().add("nav-btn-active");
+        
+        hideAllContent();
+        likesContent.setVisible(true);
+        statusLabel.setText("Viewing likes");
+        updateLikesCount();
     }
     
     @FXML
@@ -141,32 +171,18 @@ public class DashboardController implements Initializable {
         
         hideAllContent();
         matchesContent.setVisible(true);
-        defaultContentLabel.setText("Matches Section");
         statusLabel.setText("Viewing matches");
     }
     
     @FXML
-    private void showMessages() {
-        System.out.println("Showing messages");
+    private void showNotifications() {
+        System.out.println("Showing notifications");
         resetNavButtons();
-        messagesBtn.getStyleClass().add("nav-btn-active");
+        notificationsBtn.getStyleClass().add("nav-btn-active");
         
         hideAllContent();
-        messagesContent.setVisible(true);
-        defaultContentLabel.setText("Messages Section");
-        statusLabel.setText("Viewing messages");
-    }
-    
-    @FXML
-    private void showSettings() {
-        System.out.println("Showing settings");
-        resetNavButtons();
-        settingsBtn.getStyleClass().add("nav-btn-active");
-        
-        hideAllContent();
-        settingsContent.setVisible(true);
-        defaultContentLabel.setText("Settings Section");
-        statusLabel.setText("Editing settings");
+        notificationsContent.setVisible(true);
+        statusLabel.setText("Viewing notifications");
     }
     
     @FXML
@@ -184,10 +200,31 @@ public class DashboardController implements Initializable {
     }
     
     @FXML
+    private void handleLoadChats() {
+        System.out.println("Load chats clicked");
+        statusLabel.setText("Loading chats...");
+        // TODO: Implement chats loading
+    }
+    
+    @FXML
     private void handleStartDiscovery() {
         System.out.println("Start discovery clicked");
         statusLabel.setText("Starting discovery...");
         // TODO: Implement discovery feature
+    }
+    
+    @FXML
+    private void handleViewReceivedLikes() {
+        System.out.println("View received likes clicked");
+        statusLabel.setText("Loading received likes...");
+        // TODO: Implement received likes
+    }
+    
+    @FXML
+    private void handleViewSentLikes() {
+        System.out.println("View sent likes clicked");
+        statusLabel.setText("Loading sent likes...");
+        // TODO: Implement sent likes
     }
     
     @FXML
@@ -198,17 +235,16 @@ public class DashboardController implements Initializable {
     }
     
     @FXML
-    private void handleViewMessages() {
-        System.out.println("View messages clicked");
-        statusLabel.setText("Opening messages...");
-        // TODO: Implement messages view
+    private void handleMarkAllAsRead() {
+        System.out.println("Mark all as read clicked");
+        statusLabel.setText("Marking all as read...");
+        // TODO: Implement notifications
     }
     
-    @FXML
-    private void handleOpenSettings() {
-        System.out.println("Open settings clicked");
-        statusLabel.setText("Opening settings...");
-        // TODO: Implement settings
+    private void updateLikesCount() {
+        // Temporary stub - will implement with real data later
+        receivedLikesCount.setText("3");
+        sentLikesCount.setText("2");
     }
     
     private void returnToLogin() {
