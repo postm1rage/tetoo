@@ -26,26 +26,34 @@ public class Main extends Application {
     }
 
     private void showMainScreen(Stage stage) {
+        if (splashScreen != null) {
+            splashScreen.stop();
+        }
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
             Parent root = loader.load();
 
-            Scene scene = new Scene(root, 800, 600);
+            Scene scene = new Scene(root, 900, 600);
 
-            // Иконка
+
             try {
                 stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/tetoo_icon.png")));
             } catch (Exception e) {
                 System.err.println("Не удалось загрузить иконку");
             }
 
-            stage.setTitle("TETOO");
+            stage.setTitle("TETOO - Сайт знакомств");
             stage.setScene(scene);
+
+
+
             stage.centerOnScreen();
             stage.show();
 
         } catch (Exception e) {
             System.err.println("Ошибка загрузки главного экрана: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
