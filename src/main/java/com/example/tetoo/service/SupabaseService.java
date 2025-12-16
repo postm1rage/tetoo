@@ -101,4 +101,60 @@ public class SupabaseService {
             }
         }
     }
+
+    // Method for user registration
+    public boolean registerUser(String email, String password) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        
+        try {
+            // Create POST request to users table
+            String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.USERS_TABLE;
+            HttpPost request = new HttpPost(url);
+            
+            // Set headers
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Prefer", "return=representation"); // Return created record
+            
+            // Create JSON request body
+            String jsonBody = String.format(
+                "{\"email\": \"%s\", \"password_hash\": \"%s\", \"is_verified\": false}",
+                email, password
+            );
+            
+            StringEntity entity = new StringEntity(jsonBody);
+            request.setEntity(entity);
+            
+            // Execute request
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            
+            if (statusCode == 201) {
+                System.out.println("User registration successful for email: " + email);
+                return true;
+            } else {
+                // Try to read error message
+                try {
+                    HttpEntity errorEntity = response.getEntity();
+                    String errorBody = EntityUtils.toString(errorEntity);
+                    System.out.println("Registration error. Code: " + statusCode + ", Body: " + errorBody);
+                } catch (Exception e) {
+                    System.out.println("Registration error. Code: " + statusCode);
+                }
+                return false;
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error during registration: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

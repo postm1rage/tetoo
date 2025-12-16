@@ -17,25 +17,24 @@
     <AnchorPane fx:id="formsContainer" prefHeight="600.0" prefWidth="900.0">
 
         <VBox alignment="CENTER" prefHeight="600.0" prefWidth="450.0" spacing="20.0" styleClass="form-box">
-            <Label styleClass="title-label" text="Создать аккаунт" />
-            <Label styleClass="small-text" text="Введите данные для регистрации" />
+            <Label styleClass="title-label" text="Create Account" />
+            <Label styleClass="small-text" text="Enter data for registration" />
 
-            <TextField promptText="Имя пользователя" styleClass="input-field" />
-            <TextField promptText="Почта" styleClass="input-field" />
-            <PasswordField promptText="Пароль" styleClass="input-field" />
+            <TextField fx:id="regEmailField" promptText="Email" styleClass="input-field" />
+            <PasswordField fx:id="regPasswordField" promptText="Password" styleClass="input-field" />
 
-            <Button mnemonicParsing="false" onAction="#handleRegister" styleClass="action-btn" text="ЗАРЕГИСТРИРОВАТЬСЯ" />
+            <Button mnemonicParsing="false" onAction="#handleRegister" styleClass="action-btn" text="REGISTER" />
         </VBox>
 
         <VBox alignment="CENTER" layoutX="450.0" prefHeight="600.0" prefWidth="450.0" spacing="20.0" styleClass="form-box">
-            <Label styleClass="title-label" text="Вход в аккаунт" />
-            <Label styleClass="small-text" text="Войдите используя свой email" />
+            <Label styleClass="title-label" text="Login to Account" />
+            <Label styleClass="small-text" text="Login using your email" />
 
-            <TextField promptText="Почта" styleClass="input-field" />
-            <PasswordField promptText="Пароль" styleClass="input-field" />
+            <TextField fx:id="loginEmailField" promptText="Email" styleClass="input-field" />
+            <PasswordField fx:id="loginPasswordField" promptText="Password" styleClass="input-field" />
 
-            <Label styleClass="forgot-label" text="Забыли пароль?" />
-            <Button mnemonicParsing="false" onAction="#handleLogin" styleClass="action-btn" text="ВОЙТИ" />
+            <Label styleClass="forgot-label" text="Forgot password?" />
+            <Button mnemonicParsing="false" onAction="#handleLogin" styleClass="action-btn" text="LOGIN" />
         </VBox>
     </AnchorPane>
 
