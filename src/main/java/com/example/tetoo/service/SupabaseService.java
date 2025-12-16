@@ -102,6 +102,59 @@ public class SupabaseService {
         }
     }
 
+    // Method to check if user exists by email (for login prototype)
+    public User getUserByEmail(String email) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        
+        try {
+            // Create GET request with email filter
+            String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.USERS_TABLE + 
+                        "?email=eq." + email;
+            HttpGet request = new HttpGet(url);
+            
+            // Set headers
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+            request.setHeader("Content-Type", "application/json");
+            
+            // Execute request
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            
+            if (statusCode == 200) {
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+                
+                // Parse JSON response
+                JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
+                
+                if (jsonArray.size() > 0) {
+                    // User found
+                    JsonElement element = jsonArray.get(0);
+                    User user = gson.fromJson(element, User.class);
+                    System.out.println("User found: " + user.getEmail());
+                    return user;
+                } else {
+                    System.out.println("No user found with email: " + email);
+                    return null;
+                }
+            } else {
+                System.out.println("Error checking user. Code: " + statusCode);
+                return null;
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error checking user by email: " + e.getMessage());
+            return null;
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     // Method for user registration
     public boolean registerUser(String email, String password) {
         CloseableHttpClient httpClient = HttpClients.createDefault();

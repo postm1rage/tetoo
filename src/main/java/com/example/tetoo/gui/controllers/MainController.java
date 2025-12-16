@@ -1,11 +1,16 @@
 package com.example.tetoo.gui.controllers;
 
 import com.example.tetoo.service.SupabaseService;
+import com.example.tetoo.model.User;
+import com.example.tetoo.auth.SessionManager;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -14,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.animation.Interpolator;
 
@@ -111,15 +117,34 @@ public class MainController implements Initializable {
 
     @FXML
     private void handleLogin() {
-        System.out.println("Login logic...");
-        String email = loginEmailField.getText();
+        System.out.println("=== Login attempt ===");
+        String email = loginEmailField.getText().trim();
         String password = loginPasswordField.getText();
         
         if (email.isEmpty() || password.isEmpty()) {
             System.out.println("Login error: Email and password are required");
+            return;
+        }
+        
+        if (!isValidEmail(email)) {
+            System.out.println("Login error: Invalid email format");
+            return;
+        }
+        
+        // Check if user exists in database (prototype - any password accepted)
+        System.out.println("Checking user in database...");
+        User user = supabaseService.getUserByEmail(email);
+        
+        if (user != null) {
+            // For prototype, we accept any password
+            SessionManager.getInstance().login(user);
+            System.out.println("Login successful for: " + email);
+            
+            // Switch to dashboard
+            switchToDashboard();
         } else {
-            System.out.println("Login attempt with email: " + email);
-            // TODO: Add actual login logic
+            System.out.println("Login failed: User not found");
+            // TODO: Show error message to user
         }
     }
 
@@ -151,18 +176,50 @@ public class MainController implements Initializable {
         
         if (success) {
             System.out.println("Registration successful!");
-            // Clear fields after successful registration
+            
+            // Auto-login after registration (get the created user)
+            User newUser = supabaseService.getUserByEmail(email);
+            if (newUser != null) {
+                SessionManager.getInstance().login(newUser);
+                System.out.println("Auto-login after registration");
+                
+                // Switch to dashboard
+                switchToDashboard();
+            }
+            
+            // Clear fields
             regEmailField.clear();
             regPasswordField.clear();
-            // TODO: Show success message to user
         } else {
             System.out.println("Registration failed. Please try again.");
-            // TODO: Show error message to user
         }
     }
     
     private boolean isValidEmail(String email) {
         // Basic email validation
         return email != null && email.contains("@") && email.contains(".");
+    }
+    
+    private void switchToDashboard() {
+        try {
+            // Load dashboard FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml"));
+            Parent dashboardRoot = loader.load();
+            
+            // Get current stage
+            Stage stage = (Stage) mainContainer.getScene().getWindow();
+            
+            // Set new scene
+            Scene dashboardScene = new Scene(dashboardRoot, 900, 600);
+            stage.setScene(dashboardScene);
+            stage.setTitle("TETOO Dashboard");
+            stage.centerOnScreen();
+            
+            System.out.println("Switched to dashboard successfully");
+            
+        } catch (Exception e) {
+            System.err.println("Error switching to dashboard: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

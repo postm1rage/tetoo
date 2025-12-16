@@ -1,0 +1,155 @@
+/* Dashboard Styles */
+
+/* Top Bar */
+.top-bar {
+    -fx-background-color: #8A2BE2;
+    -fx-padding: 0 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+}
+
+.app-title {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 0 10px;
+}
+
+.welcome-text {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.logout-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+    -fx-padding: 5px 15px;
+    -fx-cursor: hand;
+}
+
+.logout-btn:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+/* Navigation Bar */
+.nav-bar {
+    -fx-background-color: #F5F5F5;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.profile-card {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.user-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.user-email {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+}
+
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #666666;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 15px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.nav-btn:hover {
+    -fx-background-color: #EDE7F6;
+    -fx-text-fill: #8A2BE2;
+}
+
+.nav-btn-active {
+    -fx-background-color: #8A2BE2;
+    -fx-text-fill: white;
+}
+
+.nav-btn .image-view {
+    -fx-opacity: 0.7;
+}
+
+.nav-btn:hover .image-view {
+    -fx-opacity: 1;
+}
+
+.nav-btn-active .image-view {
+    -fx-opacity: 1;
+}
+
+/* Content Area */
+.content-area {
+    -fx-background-color: white;
+    -fx-padding: 30px;
+}
+
+.content-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.content-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #666666;
+}
+
+.section-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8A2BE2;
+    -fx-padding: 0 0 10px 0;
+}
+
+.info-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666666;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+    -fx-max-width: 400px;
+}
+
+.action-btn {
+    -fx-background-color: #8A2BE2;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 25px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(138,43,226,0.3), 5, 0, 0, 2);
+}
+
+.action-btn:hover {
+    -fx-background-color: #7B1FA2;
+    -fx-effect: dropshadow(gaussian, rgba(138,43,226,0.5), 8, 0, 0, 3);
+}
+
+/* Status Bar */
+.status-bar {
+    -fx-background-color: #F5F5F5;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 0 20px;
+}
+
+.status-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+}
