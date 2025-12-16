@@ -57,7 +57,7 @@ public class MainController implements Initializable {
             StackPane.setAlignment(logoImageView, Pos.TOP_LEFT);
             StackPane.setMargin(logoImageView, new Insets(25, 0, 0, 25));
         } catch (Exception e) {
-            System.err.println("Не удалось загрузить логотип: " + e.getMessage());
+            System.err.println("Failed to load logo: " + e.getMessage());
             logoImageView.setVisible(false);
         }
     }
@@ -69,12 +69,12 @@ public class MainController implements Initializable {
         slide.setInterpolator(Interpolator.EASE_BOTH);
 
         if (isSignInActive) {
-            // Переход к РЕГИСТРАЦИИ (оверлей едет влево)
+            // Switch to REGISTRATION (overlay moves left)
             slide.setToX(0);
             isSignInActive = false;
             slide.setOnFinished(e -> setOverlayContentForSignUp());
         } else {
-            // Переход ко ВХОДУ (оверлей едет вправо)
+            // Switch to LOGIN (overlay moves right)
             slide.setToX(450);
             isSignInActive = true;
             slide.setOnFinished(e -> setOverlayContentForSignIn());
@@ -84,24 +84,24 @@ public class MainController implements Initializable {
     }
 
     private void setOverlayContentForSignIn() {
-        lblOverlayTitle.setText("Привет, друг!");
+        lblOverlayTitle.setText("Hello, friend!");
         lblOverlaySub.setText("");
-        btnOverlay.setText("ЗАРЕГИСТРИРОВАТЬСЯ");
+        btnOverlay.setText("REGISTER");
     }
 
     private void setOverlayContentForSignUp() {
-        lblOverlayTitle.setText("С возвращением!");
+        lblOverlayTitle.setText("Welcome back!");
         lblOverlaySub.setText("");
-        btnOverlay.setText("ВОЙТИ");
+        btnOverlay.setText("LOGIN");
     }
 
     @FXML
     private void handleLogin() {
-        System.out.println("Логика входа...");
+        System.out.println("Login logic...");
     }
 
     @FXML
     private void handleRegister() {
-        System.out.println("Логика регистрации...");
+        System.out.println("Registration logic...");
     }
 }

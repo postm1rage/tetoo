@@ -20,15 +20,15 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        System.out.println("=== Запуск приложения TETOO ===");
+        System.out.println("=== TETOO Application Launch ===");
         
-        // Инициализируем сервис Supabase
+        // Initialize Supabase service
         supabaseService = new SupabaseService();
         
         splashScreen = new SplashScreen(primaryStage, () -> {
-            System.out.println("Переход к главному экрану...");
+            System.out.println("Switching to main screen...");
             
-            // Тестируем подключение к базе данных
+            // Test database connection
             testSupabaseConnection();
             
             Platform.runLater(() -> showMainScreen(primaryStage));
@@ -37,28 +37,28 @@ public class Main extends Application {
     }
 
     private void testSupabaseConnection() {
-        System.out.println("\n=== Тест подключения к Supabase ===");
+        System.out.println("\n=== Supabase Connection Test ===");
         
         boolean isConnected = supabaseService.testConnection();
-        System.out.println("Подключение к Supabase: " + (isConnected ? "УСПЕШНО" : "ОШИБКА"));
+        System.out.println("Connection to Supabase: " + (isConnected ? "SUCCESS" : "ERROR"));
         
         if (isConnected) {
-            // Получаем всех пользователей
-            System.out.println("\n=== Получение пользователей из базы данных ===");
+            // Get all users
+            System.out.println("\n=== Retrieving Users from Database ===");
             List<User> users = supabaseService.getAllUsers();
             
-            // Выводим пользователей в консоль
+            // Output users to console
             if (users.isEmpty()) {
-                System.out.println("В базе данных нет пользователей");
+                System.out.println("No users found in database");
             } else {
-                System.out.println("Найдено пользователей: " + users.size());
-                System.out.println("\nСписок пользователей:");
+                System.out.println("Found users: " + users.size());
+                System.out.println("\nUser list:");
                 for (User user : users) {
                     System.out.println(user);
                 }
             }
         } else {
-            System.out.println("Не удалось подключиться к базе данных. Проверьте настройки подключения.");
+            System.out.println("Failed to connect to database. Check connection settings.");
         }
     }
 
@@ -73,75 +73,75 @@ public class Main extends Application {
 
             Scene scene = new Scene(root, 900, 600);
 
-            // Загружаем иконку приложения
+            // Load application icon
             try {
                 stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/tetoo_icon.png")));
             } catch (Exception e) {
-                System.err.println("Не удалось загрузить иконку приложения");
+                System.err.println("Failed to load application icon");
             }
 
-            stage.setTitle("TETOO - Сайт знакомств");
+            stage.setTitle("TETOO - Dating Application");
             stage.setScene(scene);
             stage.centerOnScreen();
             stage.show();
 
-            System.out.println("\n=== Главное окно успешно загружено ===");
+            System.out.println("\n=== Main window successfully loaded ===");
 
         } catch (Exception e) {
-            System.err.println("Ошибка загрузки главного экрана: " + e.getMessage());
+            System.err.println("Error loading main screen: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     @Override
     public void stop() {
-        System.out.println("=== Завершение работы приложения ===");
+        System.out.println("=== Application Shutdown ===");
         if (splashScreen != null) {
             splashScreen.stop();
         }
-        // Здесь можно добавить закрытие ресурсов Supabase
+        // Add Supabase resource cleanup here if needed
         if (supabaseService != null) {
-            // supabaseService.close(); // если такой метод есть
+            // supabaseService.close(); // if such method exists
         }
     }
 
     public static void main(String[] args) {
-        // Если нужен только тест без GUI, можно передать аргумент
+        // If only test without GUI is needed, pass the argument
         if (args.length > 0 && args[0].equals("--test-only")) {
             testOnlyMode();
         } else {
-            // Запускаем полноценное GUI приложение
+            // Launch full GUI application
             launch(args);
         }
     }
     
     private static void testOnlyMode() {
-        System.out.println("=== ТЕСТОВЫЙ РЕЖИМ (без GUI) ===");
-        System.out.println("=== Тест подключения к Supabase ===");
+        System.out.println("=== TEST MODE (No GUI) ===");
+        System.out.println("=== Supabase Connection Test ===");
         
         SupabaseService supabaseService = new SupabaseService();
         
-        // Тест подключения
+        // Connection test
         boolean isConnected = supabaseService.testConnection();
-        System.out.println("Подключение к Supabase: " + (isConnected ? "УСПЕШНО" : "ОШИБКА"));
+        System.out.println("Connection to Supabase: " + (isConnected ? "SUCCESS" : "ERROR"));
         
         if (isConnected) {
-            // Получаем всех пользователей
-            System.out.println("\n=== Получение пользователей из базы данных ===");
+            // Get all users
+            System.out.println("\n=== Retrieving Users from Database ===");
             List<User> users = supabaseService.getAllUsers();
             
-            // Выводим пользователей в консоль
+            // Output users to console
             if (users.isEmpty()) {
-                System.out.println("В базе данных нет пользователей");
+                System.out.println("No users found in database");
             } else {
-                System.out.println("Найдено пользователей: " + users.size());
-                System.out.println("\nСписок пользователей:");
+                System.out.println("Found users: " + users.size());
+                System.out.println("\nUser list:");
                 for (User user : users) {
                     System.out.println(user);
                 }
             }
         } else {
-            System.out.println("Не удалось подключиться к базе данных. Проверьте настройки подключения.");
+            System.out.println("Failed to connect to database. Check connection settings.");
         }
         
         System.exit(0);

@@ -20,22 +20,22 @@ import java.util.List;
 public class SupabaseService {
     private static final Gson gson = new Gson();
     
-    // Метод для тестирования подключения и получения всех пользователей
+    // Method for testing connection and getting all users
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         CloseableHttpClient httpClient = HttpClients.createDefault();
         
         try {
-            // Создаем GET запрос к таблице users
+            // Create GET request to users table
             String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.USERS_TABLE;
             HttpGet request = new HttpGet(url);
             
-            // Устанавливаем заголовки
+            // Set headers
             request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
             request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
             request.setHeader("Content-Type", "application/json");
             
-            // Выполняем запрос
+            // Execute request
             HttpResponse response = httpClient.execute(request);
             int statusCode = response.getStatusLine().getStatusCode();
             
@@ -43,7 +43,7 @@ public class SupabaseService {
                 HttpEntity entity = response.getEntity();
                 String responseBody = EntityUtils.toString(entity);
                 
-                // Парсим JSON ответ
+                // Parse JSON response
                 JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
                 
                 for (JsonElement element : jsonArray) {
@@ -51,13 +51,13 @@ public class SupabaseService {
                     users.add(user);
                 }
                 
-                System.out.println("Успешно получено " + users.size() + " пользователей");
+                System.out.println("Successfully retrieved " + users.size() + " users");
             } else {
-                System.out.println("Ошибка при запросе. Код: " + statusCode);
+                System.out.println("Error in request. Code: " + statusCode);
             }
             
         } catch (Exception e) {
-            System.out.println("Ошибка при подключении к Supabase: " + e.getMessage());
+            System.out.println("Error connecting to Supabase: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
@@ -70,28 +70,28 @@ public class SupabaseService {
         return users;
     }
     
-    // Метод для теста подключения (минимальный запрос)
+    // Method for connection test (minimal request)
     public boolean testConnection() {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         
         try {
-            // Простой запрос к таблице users с limit=1
+            // Simple request to users table with limit=1
             String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.USERS_TABLE + "?limit=1";
             HttpGet request = new HttpGet(url);
             
-            // Устанавливаем заголовки
+            // Set headers
             request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
             request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
             request.setHeader("Content-Type", "application/json");
             
-            // Выполняем запрос
+            // Execute request
             HttpResponse response = httpClient.execute(request);
             int statusCode = response.getStatusLine().getStatusCode();
             
             return statusCode == 200;
             
         } catch (Exception e) {
-            System.out.println("Ошибка при тестировании подключения: " + e.getMessage());
+            System.out.println("Error testing connection: " + e.getMessage());
             return false;
         } finally {
             try {
