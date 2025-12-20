@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane fx:id="mainPane" prefHeight="700.0" prefWidth="1000.0" stylesheets="@../styles/dashboard.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tetoo.gui.controllers.DiscoverController">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="top-bar">
+            <ImageView fitHeight="40.0" fitWidth="40.0" preserveRatio="true">
+                <Image url="@../images/tetoo_logo_small.png" />
+            </ImageView>
+            <Label styleClass="app-title" text="TETOO" />
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
+                <Label fx:id="welcomeLabel" styleClass="welcome-text" />
+                <Button mnemonicParsing="false" onAction="#handleBackToDashboard" styleClass="nav-btn" text="Back to menu" />
+            </HBox>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="25" styleClass="discover-container">
+                <padding>
+                    <Insets bottom="30" left="30" right="30" top="30" />
+                </padding>
+
+                <!-- Discover Header -->
+                <VBox spacing="15" styleClass="discover-header">
+                    <Label styleClass="section-title" text="Discover People" />
+                    <Label styleClass="info-text" text="Find and connect with amazing people around you" />
+
+                    <!-- Search and Filters -->
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <TextField promptText="Search by name, interests..." styleClass="search-field-discover" HBox.hgrow="ALWAYS" />
+                        <ComboBox promptText="Age" style="-fx-background-color: white;" styleClass="filter-combo" />
+                        <ComboBox promptText="Location" style="-fx-background-color: white;" styleClass="filter-combo" />
+                        <ComboBox promptText="Interests" style="-fx-background-color: white;" styleClass="filter-combo" />
+                        <Button styleClass="action-btn" text="Apply Filters" />
+                    </HBox>
+                </VBox>
+
+                <!-- People Grid -->
+                <GridPane styleClass="grid-container">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33" />
+                        <ColumnConstraints percentWidth="33" />
+                        <ColumnConstraints percentWidth="33" />
+                    </columnConstraints>
+
+                    <!-- Person Card 1 -->
+                    <VBox spacing="10" styleClass="user-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <StackPane>
+                            <Circle fill="#ec4b6e" radius="60" />
+                            <ImageView fitHeight="100" fitWidth="100" preserveRatio="true" styleClass="card-avatar" />
+                            <Circle fill="#4CAF50" radius="8" styleClass="online-indicator" StackPane.alignment="BOTTOM_RIGHT" />
+                        </StackPane>
+                        <Label styleClass="card-name" text="Emma Wilson" />
+                        <Label styleClass="card-info" text="25 • New York" />
+                        <Label styleClass="card-interests" text="Artist, Traveler, Coffee Lover" wrapText="true" />
+                        <HBox alignment="CENTER" spacing="10">
+                            <Button styleClass="action-btn" text="Like" HBox.hgrow="ALWAYS" />
+                            <Button styleClass="secondary-btn" text="View" HBox.hgrow="ALWAYS" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- Person Card 2 -->
+                    <VBox spacing="10" styleClass="user-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <StackPane>
+                            <Circle fill="#2196F3" radius="60" />
+                            <ImageView fitHeight="100" fitWidth="100" preserveRatio="true" styleClass="card-avatar" />
+                        </StackPane>
+                        <Label styleClass="card-name" text="David Chen" />
+                        <Label styleClass="card-info" text="28 • San Francisco" />
+                        <Label styleClass="card-interests" text="Developer, Hiker, Foodie" wrapText="true" />
+                        <HBox alignment="CENTER" spacing="10">
+                            <Button styleClass="action-btn" text="Like" HBox.hgrow="ALWAYS" />
+                            <Button styleClass="secondary-btn" text="View" HBox.hgrow="ALWAYS" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- Person Card 3 -->
+                    <VBox spacing="10" styleClass="user-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <StackPane>
+                            <Circle fill="#FF9800" radius="60" />
+                            <ImageView fitHeight="100" fitWidth="100" preserveRatio="true" styleClass="card-avatar" />
+                            <Circle fill="#4CAF50" radius="8" styleClass="online-indicator" StackPane.alignment="BOTTOM_RIGHT" />
+                        </StackPane>
+                        <Label styleClass="card-name" text="Sophia Martinez" />
+                        <Label styleClass="card-info" text="23 • Miami" />
+                        <Label styleClass="card-interests" text="Yoga Instructor, Reader, Adventurer" wrapText="true" />
+                        <HBox alignment="CENTER" spacing="10">
+                            <Button styleClass="action-btn" text="Like" HBox.hgrow="ALWAYS" />
+                            <Button styleClass="secondary-btn" text="View" HBox.hgrow="ALWAYS" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- Person Card 4 -->
+                    <VBox spacing="10" styleClass="user-card" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <StackPane>
+                            <Circle fill="#9C27B0" radius="60" />
+                            <ImageView fitHeight="100" fitWidth="100" preserveRatio="true" styleClass="card-avatar" />
+                        </StackPane>
+                        <Label styleClass="card-name" text="James Taylor" />
+                        <Label styleClass="card-info" text="30 • Chicago" />
+                        <Label styleClass="card-interests" text="Musician, Photographer, Chef" wrapText="true" />
+                        <HBox alignment="CENTER" spacing="10">
+                            <Button styleClass="action-btn" text="Like" HBox.hgrow="ALWAYS" />
+                            <Button styleClass="secondary-btn" text="View" HBox.hgrow="ALWAYS" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- Person Card 5 -->
+                    <VBox spacing="10" styleClass="user-card" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <StackPane>
+                            <Circle fill="#009688" radius="60" />
+                            <ImageView fitHeight="100" fitWidth="100" preserveRatio="true" styleClass="card-avatar" />
+                            <Circle fill="#4CAF50" radius="8" styleClass="online-indicator" StackPane.alignment="BOTTOM_RIGHT" />
+                        </StackPane>
+                        <Label styleClass="card-name" text="Olivia Parker" />
+                        <Label styleClass="card-info" text="27 • Seattle" />
+                        <Label styleClass="card-interests" text="Writer, Runner, Animal Lover" wrapText="true" />
+                        <HBox alignment="CENTER" spacing="10">
+                            <Button styleClass="action-btn" text="Like" HBox.hgrow="ALWAYS" />
+                            <Button styleClass="secondary-btn" text="View" HBox.hgrow="ALWAYS" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- Person Card 6 -->
+                    <VBox spacing="10" styleClass="user-card" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <StackPane>
+                            <Circle fill="#3F51B5" radius="60" />
+                            <ImageView fitHeight="100" fitWidth="100" preserveRatio="true" styleClass="card-avatar" />
+                        </StackPane>
+                        <Label styleClass="card-name" text="Ryan Cooper" />
+                        <Label styleClass="card-info" text="26 • Austin" />
+                        <Label styleClass="card-interests" text="Entrepreneur, Surfer, Traveler" wrapText="true" />
+                        <HBox alignment="CENTER" spacing="10">
+                            <Button styleClass="action-btn" text="Like" HBox.hgrow="ALWAYS" />
+                            <Button styleClass="secondary-btn" text="View" HBox.hgrow="ALWAYS" />
+                        </HBox>
+                    </VBox>
+
+                    <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                    </rowConstraints>
+                </GridPane>
+
+                <!-- Pagination -->
+                <HBox alignment="CENTER" spacing="10" styleClass="pagination-container">
+                    <Button styleClass="secondary-btn" text="Previous" />
+                    <Label styleClass="page-info" text="Page 1 of 5" />
+                    <Button styleClass="secondary-btn" text="Next" />
+                </HBox>
+
+                <!-- Empty State -->
+                <VBox alignment="CENTER" spacing="20" styleClass="empty-state" visible="false">
+                    <ImageView fitHeight="100" fitWidth="100" preserveRatio="true">
+                        <Image url="@../icons/discover_empty_icon.png" />
+                    </ImageView>
+                    <Label styleClass="empty-state-text" text="No more people to discover in your area" />
+                    <Label styleClass="hint-text" text="Try adjusting your filters or check back later" />
+                    <Button styleClass="action-btn" text="Reset Filters" />
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="30.0" styleClass="status-bar">
+            <Label fx:id="statusLabel" styleClass="status-text" text="Discover • 6 people found" />
+        </HBox>
+    </bottom>
+
+</BorderPane>

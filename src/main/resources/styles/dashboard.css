@@ -1,8 +1,8 @@
-/* Dashboard Styles */
+/* Dashboard Global Styles */
 
-/* Top Bar */
+/* Top Bar - РОЗОВЫЙ (#ec4b6e) */
 .top-bar {
-    -fx-background-color: #8A2BE2;
+    -fx-background-color: #ec4b6e;
     -fx-padding: 0 20px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
 }
@@ -25,6 +25,7 @@
     -fx-border-color: white;
     -fx-border-width: 1px;
     -fx-border-radius: 15px;
+    -fx-background-radius: 15px;
     -fx-padding: 5px 15px;
     -fx-cursor: hand;
 }
@@ -33,15 +34,16 @@
     -fx-background-color: rgba(255,255,255,0.1);
 }
 
-/* Navigation Bar */
+/* Navigation Bar - РОЗОВЫЙ (#ec4b6e) */
 .nav-bar {
-    -fx-background-color: #F5F5F5;
-    -fx-border-color: #E0E0E0;
+    -fx-background-color: #ec4b6e;
+    -fx-border-color: #d64062;
     -fx-border-width: 0 1px 0 0;
+    -fx-padding: 10px;
 }
 
 .profile-card {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-padding: 20px;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
@@ -61,27 +63,28 @@
 
 .nav-btn {
     -fx-background-color: transparent;
-    -fx-text-fill: #666666;
+    -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-padding: 12px 15px;
     -fx-alignment: CENTER_LEFT;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
     -fx-cursor: hand;
+    -fx-font-weight: bold;
 }
 
 .nav-btn:hover {
-    -fx-background-color: #EDE7F6;
-    -fx-text-fill: #8A2BE2;
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: white;
 }
 
 .nav-btn-active {
-    -fx-background-color: #8A2BE2;
+    -fx-background-color: rgba(255, 255, 255, 0.25);
     -fx-text-fill: white;
 }
 
 .nav-btn .image-view {
-    -fx-opacity: 0.7;
+    -fx-opacity: 0.8;
 }
 
 .nav-btn:hover .image-view {
@@ -92,39 +95,27 @@
     -fx-opacity: 1;
 }
 
-/* Content Area */
+/* Content Area - Common */
 .content-area {
     -fx-background-color: white;
 }
 
-.content-title {
+.section-title {
     -fx-font-size: 28px;
     -fx-font-weight: bold;
-    -fx-text-fill: #333333;
-}
-
-.content-subtitle {
-    -fx-font-size: 16px;
-    -fx-text-fill: #666666;
-}
-
-.section-title {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #8A2BE2;
-    -fx-padding: 0 0 10px 0;
+    -fx-text-fill: #ec4b6e;
+    -fx-padding: 0 0 20px 0;
 }
 
 .info-text {
-    -fx-font-size: 14px;
+    -fx-font-size: 16px;
     -fx-text-fill: #666666;
-    -fx-text-alignment: center;
     -fx-wrap-text: true;
-    -fx-max-width: 400px;
 }
 
+/* Action Buttons */
 .action-btn {
-    -fx-background-color: #8A2BE2;
+    -fx-background-color: #ec4b6e;
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
@@ -132,71 +123,17 @@
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(138,43,226,0.3), 5, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(236, 75, 110, 0.3), 5, 0, 0, 2);
 }
 
 .action-btn:hover {
-    -fx-background-color: #7B1FA2;
-    -fx-effect: dropshadow(gaussian, rgba(138,43,226,0.5), 8, 0, 0, 3);
-}
-
-/* Status Bar */
-.status-bar {
-    -fx-background-color: #F5F5F5;
-    -fx-border-color: #E0E0E0;
-    -fx-border-width: 1px 0 0 0;
-    -fx-padding: 0 20px;
-}
-
-.status-text {
-    -fx-font-size: 12px;
-    -fx-text-fill: #666666;
-}
-
-/* New styles for 6-tab layout */
-
-/* Profile Avatar in content */
-.profile-avatar {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
-    -fx-border-radius: 50%;
-    -fx-background-radius: 50%;
-}
-
-.profile-name {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333333;
-}
-
-.profile-info {
-    -fx-font-size: 14px;
-    -fx-text-fill: #666666;
-}
-
-/* Likes Section */
-.likes-section {
-    -fx-background-color: #F9F9F9;
-    -fx-padding: 15px;
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);
-}
-
-.subsection-title {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #555555;
-}
-
-.likes-count {
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #8A2BE2;
+    -fx-background-color: #d64062;
+    -fx-effect: dropshadow(gaussian, rgba(236, 75, 110, 0.5), 8, 0, 0, 3);
 }
 
 .secondary-btn {
-    -fx-background-color: #EDE7F6;
-    -fx-text-fill: #8A2BE2;
+    -fx-background-color: #F0F0F0;
+    -fx-text-fill: #ec4b6e;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-padding: 8px 20px;
@@ -206,5 +143,82 @@
 }
 
 .secondary-btn:hover {
-    -fx-background-color: #D1C4E9;
+    -fx-background-color: #E0E0E0;
+}
+
+/* Status Bar */
+.status-bar {
+    -fx-background-color: #ec4b6e;
+    -fx-border-color: #d64062;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 0 20px;
+}
+
+.status-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: white;
+}
+
+/* Card Styles */
+.user-card {
+    -fx-background-color: white;
+    -fx-border-radius: 15px;
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-padding: 20px;
+}
+
+.user-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(236, 75, 110, 0.2), 15, 0, 0, 5);
+    -fx-border-color: #ec4b6e;
+}
+
+.card-avatar {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.card-name {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.card-info {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666666;
+}
+
+/* Grid Layout */
+.grid-container {
+    -fx-hgap: 20px;
+    -fx-vgap: 20px;
+    -fx-padding: 20px;
+}
+
+/* Scroll Pane */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Loading States */
+.loading-spinner {
+    -fx-progress-color: #ec4b6e;
+}
+
+.empty-state {
+    -fx-alignment: center;
+    -fx-padding: 50px;
+}
+
+.empty-state-text {
+    -fx-font-size: 18px;
+    -fx-text-fill: #999999;
+    -fx-text-alignment: center;
 }

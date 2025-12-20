@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane fx:id="mainPane" prefHeight="700.0" prefWidth="1000.0" stylesheets="@../styles/dashboard.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tetoo.gui.controllers.ChatsController">
+
+    <!-- Top Bar -->
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="top-bar">
+            <ImageView fitHeight="40.0" fitWidth="40.0" preserveRatio="true">
+                <Image url="@../images/tetoo_logo_small.png" />
+            </ImageView>
+            <Label styleClass="app-title" text="TETOO" />
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
+                <Label fx:id="welcomeLabel" styleClass="welcome-text" />
+                <Button mnemonicParsing="false" onAction="#handleBackToDashboard" styleClass="nav-btn" text="Back to menu" />
+            </HBox>
+        </HBox>
+    </top>
+
+    <!-- Main Content -->
+    <center>
+        <SplitPane dividerPositions="0.3" styleClass="chat-split-pane">
+
+            <!-- Left Panel - Chat List -->
+            <VBox prefWidth="300" styleClass="chat-list-panel">
+                <VBox spacing="15" styleClass="chat-header">
+                    <padding>
+                        <Insets bottom="20" left="20" right="20" top="20" />
+                    </padding>
+                    <Label styleClass="section-title" text="Messages" />
+                    <TextField promptText="Search conversations..." styleClass="search-field" />
+                </VBox>
+
+                <ScrollPane fitToWidth="true" styleClass="chat-scroll-pane">
+                    <VBox spacing="10" styleClass="chat-list">
+                        <padding>
+                            <Insets bottom="20" left="10" right="10" />
+                        </padding>
+
+                        <!-- Chat Item 1 -->
+                        <HBox spacing="15" styleClass="chat-item">
+                            <StackPane>
+                                <Circle fill="#ec4b6e" radius="25" />
+                                <ImageView fitHeight="45" fitWidth="45" preserveRatio="true" styleClass="chat-avatar" />
+                            </StackPane>
+                            <VBox spacing="3" styleClass="chat-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="chat-name" text="Alex Johnson" />
+                                    <Label styleClass="chat-time" text="2h ago" />
+                                </HBox>
+                                <Label styleClass="chat-preview" text="Hey! How are you doing?" wrapText="true" />
+                            </VBox>
+                            <VBox alignment="TOP_RIGHT" styleClass="chat-status">
+                                <Circle fill="#4CAF50" radius="5" />
+                                <Label styleClass="unread-count" text="3" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Chat Item 2 -->
+                        <HBox spacing="15" styleClass="chat-item">
+                            <StackPane>
+                                <Circle fill="#2196F3" radius="25" />
+                                <ImageView fitHeight="45" fitWidth="45" preserveRatio="true" styleClass="chat-avatar" />
+                            </StackPane>
+                            <VBox spacing="3" styleClass="chat-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="chat-name" text="Sarah Miller" />
+                                    <Label styleClass="chat-time" text="Yesterday" />
+                                </HBox>
+                                <Label styleClass="chat-preview" text="Are we still meeting tomorrow?" wrapText="true" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Chat Item 3 -->
+                        <HBox spacing="15" styleClass="chat-item">
+                            <StackPane>
+                                <Circle fill="#FF9800" radius="25" />
+                                <ImageView fitHeight="45" fitWidth="45" preserveRatio="true" styleClass="chat-avatar" />
+                            </StackPane>
+                            <VBox spacing="3" styleClass="chat-info">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label styleClass="chat-name" text="Michael Brown" />
+                                    <Label styleClass="chat-time" text="3d ago" />
+                                </HBox>
+                                <Label styleClass="chat-preview" text="Thanks for the great time!" wrapText="true" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Empty State -->
+                        <VBox alignment="CENTER" spacing="15" styleClass="empty-state">
+                            <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
+                                <Image url="@../icons/chat_empty_icon.png" />
+                            </ImageView>
+                            <Label styleClass="empty-state-text" text="No conversations yet" />
+                            <Button styleClass="action-btn" text="Start New Chat" />
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Right Panel - Chat Window -->
+            <VBox styleClass="chat-window-panel">
+                <!-- Chat Header -->
+                <HBox spacing="15" styleClass="chat-window-header">
+                    <StackPane>
+                        <Circle fill="#ec4b6e" radius="25" />
+                        <ImageView fitHeight="45" fitWidth="45" preserveRatio="true" styleClass="chat-avatar" />
+                    </StackPane>
+                    <VBox spacing="3" styleClass="chat-info">
+                        <Label styleClass="chat-name" text="Alex Johnson" />
+                        <Label styleClass="chat-status-text" text="Online" />
+                    </VBox>
+                    <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                        <Button styleClass="secondary-btn" text="View Profile" />
+                    </HBox>
+                </HBox>
+
+                <!-- Messages Area -->
+                <ScrollPane fitToWidth="true" styleClass="messages-scroll-pane">
+                    <VBox spacing="10" styleClass="messages-container">
+                        <padding>
+                            <Insets bottom="20" left="20" right="20" top="20" />
+                        </padding>
+
+                        <!-- Message from other -->
+                        <HBox alignment="TOP_LEFT" spacing="10">
+                            <StackPane>
+                                <Circle fill="#ec4b6e" radius="20" />
+                                <ImageView fitHeight="35" fitWidth="35" preserveRatio="true" />
+                            </StackPane>
+                            <VBox spacing="5" styleClass="message-bubble-other">
+                                <Label styleClass="message-text" text="Hey there! How are you doing today?" wrapText="true" />
+                                <Label styleClass="message-time" text="2:30 PM" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Your message -->
+                        <HBox alignment="TOP_RIGHT" spacing="10">
+                            <VBox spacing="5" styleClass="message-bubble-you">
+                                <Label styleClass="message-text" text="I'm doing great! Just finished work. How about you?" wrapText="true" />
+                                <Label styleClass="message-time" text="2:32 PM" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Message from other -->
+                        <HBox alignment="TOP_LEFT" spacing="10">
+                            <StackPane>
+                                <Circle fill="#ec4b6e" radius="20" />
+                                <ImageView fitHeight="35" fitWidth="35" preserveRatio="true" />
+                            </StackPane>
+                            <VBox spacing="5" styleClass="message-bubble-other">
+                                <Label styleClass="message-text" text="Pretty good! Want to grab coffee this weekend?" wrapText="true" />
+                                <Label styleClass="message-time" text="2:35 PM" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+
+                <!-- Message Input -->
+                <HBox spacing="10" styleClass="message-input-container">
+                    <padding>
+                        <Insets bottom="15" left="20" right="20" top="15" />
+                    </padding>
+                    <TextField promptText="Type your message here..." styleClass="message-input" HBox.hgrow="ALWAYS" />
+                    <Button styleClass="action-btn" text="Send" />
+                </HBox>
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+    <!-- Bottom Status Bar -->
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="30.0" styleClass="status-bar">
+            <Label fx:id="statusLabel" styleClass="status-text" text="Chats • Online" />
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane fx:id="mainPane" prefHeight="700.0" prefWidth="1000.0"
+            stylesheets="@../styles/dashboard.css, @../styles/likes.css"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.tetoo.gui.controllers.LikesController">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="top-bar">
+            <ImageView fitHeight="40.0" fitWidth="40.0" preserveRatio="true">
+                <Image url="@../images/tetoo_logo_small.png" />
+            </ImageView>
+            <Label text="TETOO" styleClass="app-title" />
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
+                <Label fx:id="welcomeLabel" styleClass="welcome-text" />
+                <Button mnemonicParsing="false" onAction="#handleBackToDashboard"
+                        styleClass="nav-btn" text="Back to menu" />
+            </HBox>
+        </HBox>
+    </top>
+
+    <center>
+        <TabPane styleClass="likes-tab-pane">
+            <tabs>
+                <!-- Received Likes Tab -->
+                <Tab text="Received Likes">
+                    <graphic>
+                        <HBox spacing="5" alignment="CENTER">
+                            <Label text="Received Likes" />
+                            <Label text="3" styleClass="likes-count-badge" />
+                        </HBox>
+                    </graphic>
+                    <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                        <VBox spacing="25" styleClass="likes-container">
+                            <padding>
+                                <Insets top="30" right="30" bottom="30" left="30" />
+                            </padding>
+
+                            <!-- Received Likes Header -->
+                            <VBox spacing="15" styleClass="likes-header">
+                                <Label text="People who liked you" styleClass="section-title" />
+                                <Label text="These people are interested in connecting with you"
+                                       styleClass="info-text" />
+                            </VBox>
+
+                            <!-- Stats Overview -->
+                            <HBox spacing="40" alignment="CENTER" styleClass="likes-stats">
+                                <VBox alignment="CENTER" spacing="5" styleClass="likes-stat-item">
+                                    <Label text="3" styleClass="likes-stat-number" />
+                                    <Label text="Total Likes" styleClass="likes-stat-label" />
+                                </VBox>
+                                <VBox alignment="CENTER" spacing="5" styleClass="likes-stat-item">
+                                    <Label text="2" styleClass="likes-stat-number" />
+                                    <Label text="New This Week" styleClass="likes-stat-label" />
+                                </VBox>
+                                <VBox alignment="CENTER" spacing="5" styleClass="likes-stat-item">
+                                    <Label text="67%" styleClass="likes-stat-number" />
+                                    <Label text="Response Rate" styleClass="likes-stat-label" />
+                                </VBox>
+                            </HBox>
+
+                            <!-- Received Likes Grid -->
+                            <GridPane styleClass="likes-grid-container">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="50" />
+                                    <ColumnConstraints percentWidth="50" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints />
+                                    <RowConstraints />
+                                </rowConstraints>
+
+                                <!-- Received Like 1 -->
+                                <HBox styleClass="like-card" spacing="20" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                                    <StackPane styleClass="like-avatar-container">
+                                        <Circle radius="45" fill="#ec4b6e" />
+                                        <ImageView fitHeight="80" fitWidth="80" preserveRatio="true"
+                                                   styleClass="like-avatar" />
+                                        <Circle radius="8" fill="#4CAF50" styleClass="online-indicator"
+                                                StackPane.alignment="BOTTOM_RIGHT" />
+                                    </StackPane>
+                                    <VBox spacing="8" styleClass="like-info">
+                                        <Label text="Mia Johnson" styleClass="like-name" />
+                                        <Label text="24 • Los Angeles" styleClass="like-details" />
+                                        <Label text="Artist, Traveler, Coffee Lover"
+                                               styleClass="like-details" wrapText="true" />
+                                        <Label text="Liked you 2 hours ago" styleClass="like-time" />
+                                        <HBox spacing="12" styleClass="like-actions">
+                                            <Button text="Like Back" styleClass="action-btn" />
+                                            <Button text="View Profile" styleClass="secondary-btn" />
+                                        </HBox>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Received Like 2 -->
+                                <HBox styleClass="like-card" spacing="20" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                                    <StackPane styleClass="like-avatar-container">
+                                        <Circle radius="45" fill="#2196F3" />
+                                        <ImageView fitHeight="80" fitWidth="80" preserveRatio="true"
+                                                   styleClass="like-avatar" />
+                                    </StackPane>
+                                    <VBox spacing="8" styleClass="like-info">
+                                        <Label text="Chris Evans" styleClass="like-name" />
+                                        <Label text="29 • Chicago" styleClass="like-details" />
+                                        <Label text="Developer, Photographer, Foodie"
+                                               styleClass="like-details" wrapText="true" />
+                                        <Label text="Liked you yesterday" styleClass="like-time" />
+                                        <HBox spacing="12" styleClass="like-actions">
+                                            <Button text="Like Back" styleClass="action-btn" />
+                                            <Button text="View Profile" styleClass="secondary-btn" />
+                                        </HBox>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Received Like 3 -->
+                                <HBox styleClass="like-card" spacing="20" GridPane.rowIndex="1" GridPane.columnIndex="0">
+                                    <StackPane styleClass="like-avatar-container">
+                                        <Circle radius="45" fill="#FF9800" />
+                                        <ImageView fitHeight="80" fitWidth="80" preserveRatio="true"
+                                                   styleClass="like-avatar" />
+                                    </StackPane>
+                                    <VBox spacing="8" styleClass="like-info">
+                                        <Label text="Sophie Turner" styleClass="like-name" />
+                                        <Label text="26 • London" styleClass="like-details" />
+                                        <Label text="Writer, Yoga Instructor, Reader"
+                                               styleClass="like-details" wrapText="true" />
+                                        <Label text="Liked you 3 days ago" styleClass="like-time" />
+                                        <HBox spacing="12" styleClass="like-actions">
+                                            <Button text="Like Back" styleClass="action-btn" />
+                                            <Button text="View Profile" styleClass="secondary-btn" />
+                                        </HBox>
+                                    </VBox>
+                                </HBox>
+                            </GridPane>
+
+                            <!-- Empty State for Received -->
+                            <VBox alignment="CENTER" spacing="25" styleClass="likes-empty-state" visible="false">
+                                <ImageView fitHeight="120" fitWidth="120" preserveRatio="true"
+                                           styleClass="likes-empty-state-icon">
+                                    <Image url="@../icons/likes_icon.png" />
+                                </ImageView>
+                                <Label text="No one has liked you yet" styleClass="likes-empty-state-text" />
+                                <Label text="Update your profile photos and bio to get more attention"
+                                       styleClass="likes-empty-state-hint" />
+                                <Button text="Edit Profile" styleClass="action-btn" />
+                            </VBox>
+                        </VBox>
+                    </ScrollPane>
+                </Tab>
+
+                <!-- Sent Likes Tab -->
+                <Tab text="Sent Likes">
+                    <graphic>
+                        <HBox spacing="5" alignment="CENTER">
+                            <Label text="Sent Likes" />
+                            <Label text="2" styleClass="likes-count-badge" />
+                        </HBox>
+                    </graphic>
+                    <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                        <VBox spacing="25" styleClass="likes-container">
+                            <padding>
+                                <Insets top="30" right="30" bottom="30" left="30" />
+                            </padding>
+
+                            <!-- Sent Likes Header -->
+                            <VBox spacing="15" styleClass="likes-header">
+                                <Label text="People you liked" styleClass="section-title" />
+                                <Label text="These are the people you've shown interest in"
+                                       styleClass="info-text" />
+                            </VBox>
+
+                            <!-- Sent Likes Grid -->
+                            <GridPane styleClass="likes-grid-container">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="50" />
+                                    <ColumnConstraints percentWidth="50" />
+                                </columnConstraints>
+
+                                <!-- Sent Like 1 -->
+                                <HBox styleClass="like-card" spacing="20" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                                    <StackPane styleClass="like-avatar-container">
+                                        <Circle radius="45" fill="#9C27B0" />
+                                        <ImageView fitHeight="80" fitWidth="80" preserveRatio="true"
+                                                   styleClass="like-avatar" />
+                                    </StackPane>
+                                    <VBox spacing="8" styleClass="like-info">
+                                        <Label text="Alex Morgan" styleClass="like-name" />
+                                        <Label text="27 • Miami" styleClass="like-details" />
+                                        <Label text="Musician, Surfer, Adventure Seeker"
+                                               styleClass="like-details" wrapText="true" />
+                                        <Label text="You liked 1 day ago" styleClass="like-time" />
+                                        <HBox spacing="12" styleClass="like-status">
+                                            <Label text="Pending" styleClass="status-pending" />
+                                        </HBox>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Sent Like 2 -->
+                                <HBox styleClass="like-card" spacing="20" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                                    <StackPane styleClass="like-avatar-container">
+                                        <Circle radius="45" fill="#009688" />
+                                        <ImageView fitHeight="80" fitWidth="80" preserveRatio="true"
+                                                   styleClass="like-avatar" />
+                                        <Circle radius="8" fill="#4CAF50" styleClass="online-indicator"
+                                                StackPane.alignment="BOTTOM_RIGHT" />
+                                    </StackPane>
+                                    <VBox spacing="8" styleClass="like-info">
+                                        <Label text="Michael Brown" styleClass="like-name" />
+                                        <Label text="31 • Seattle" styleClass="like-details" />
+                                        <Label text="Entrepreneur, Hiker, Coffee Enthusiast"
+                                               styleClass="like-details" wrapText="true" />
+                                        <Label text="You liked 3 days ago" styleClass="like-time" />
+                                        <HBox spacing="12" styleClass="like-status">
+                                            <Label text="Matched!" styleClass="status-matched" />
+                                        </HBox>
+                                    </VBox>
+                                </HBox>
+                            </GridPane>
+
+                            <!-- Empty State for Sent -->
+                            <VBox alignment="CENTER" spacing="25" styleClass="likes-empty-state" visible="false">
+                                <ImageView fitHeight="120" fitWidth="120" preserveRatio="true"
+                                           styleClass="likes-empty-state-icon">
+                                    <Image url="@../icons/likes_icon.png" />
+                                </ImageView>
+                                <Label text="You haven't liked anyone yet" styleClass="likes-empty-state-text" />
+                                <Label text="Start discovering amazing people to connect with"
+                                       styleClass="likes-empty-state-hint" />
+                                <Button text="Discover People" styleClass="action-btn" />
+                            </VBox>
+                        </VBox>
+                    </ScrollPane>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="30.0" styleClass="status-bar">
+            <Label fx:id="statusLabel" styleClass="status-text" text="Likes • 3 received, 2 sent • 1 match" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
