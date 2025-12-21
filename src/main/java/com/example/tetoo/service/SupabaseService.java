@@ -832,4 +832,16 @@ public class SupabaseService {
         }
         return null;
     }
+
+
+    public void createTestChat(Integer user1Id, Integer user2Id) {
+        System.out.println("Creating test chat between users " + user1Id + " and " + user2Id);
+        
+        sendMessage(user1Id, user2Id, "Привет от пользователя " + user1Id + "!");
+        sendMessage(user2Id, user1Id, "Привет от пользователя " + user2Id + "!");
+        sendMessage(user1Id, user2Id, "Как дела?");
+        sendMessage(user2Id, user1Id, "Отлично! А у тебя?");
+        
+        System.out.println("Test chat created");
+    }
 }
