@@ -13,12 +13,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import main.java.com.example.tetoo.model.Chat;
+import main.java.com.example.tetoo.model.Message;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ScheduledExecutorService;
+
+import javax.swing.text.html.ListView;
 
 public class DashboardController implements Initializable {
-
     @FXML private Label welcomeLabel;
     @FXML private Label userNameLabel;
     @FXML private Label userEmailLabel;
@@ -44,6 +48,21 @@ public class DashboardController implements Initializable {
     @FXML private VBox discoverContent;
     @FXML private VBox likesContent;
     @FXML private VBox matchesContent;
+
+    // Chat UI elements
+    @FXML private ListView<Chat> chatsListView;
+    @FXML private ListView<Message> messagesListView;
+    @FXML private TextArea messageInputArea;
+    @FXML private Button sendMessageButton;
+    @FXML private Label chatPartnerNameLabel;
+    @FXML private Label chatPartnerInfoLabel;
+    @FXML private VBox chatArea;
+    @FXML private VBox noChatSelectedPane;
+
+    // Chat state
+    private Chat selectedChat;
+    private Timer chatUpdateTimer;
+    private ScheduledExecutorService scheduler;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
