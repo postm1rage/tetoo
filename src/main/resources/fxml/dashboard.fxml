@@ -70,15 +70,6 @@
                     </graphic>
                 </Button>
 
-                <Button fx:id="discoverBtn" mnemonicParsing="false" onAction="#showDiscover"
-                        styleClass="nav-btn" text="Discover">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
-                            <Image url="@../icons/search_icon.png" />
-                        </ImageView>
-                    </graphic>
-                </Button>
-
                 <Button fx:id="likesBtn" mnemonicParsing="false" onAction="#showLikes"
                         styleClass="nav-btn" text="Likes">
                     <graphic>
@@ -124,14 +115,6 @@
             <VBox fx:id="chatsContent" spacing="0" visible="false" StackPane.alignment="CENTER">
                 <!-- Include chat panel -->
                 <fx:include source="chat_panel.fxml" fx:id="chatPanel" />
-            </VBox>
-
-            <!-- Discover content (hidden by default) -->
-            <VBox fx:id="discoverContent" spacing="15.0" visible="false" style="-fx-padding: 20;">
-                <Label text="Discover People" styleClass="section-title" />
-                <Label text="Find and connect with new people" styleClass="info-text" />
-                <Button mnemonicParsing="false" onAction="#handleStartDiscovery"
-                        styleClass="action-btn" text="Start Discovery" />
             </VBox>
 
             <!-- Likes content (hidden by default) -->

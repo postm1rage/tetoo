@@ -29,6 +29,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javafx.scene.control.ListView;
+
 public class ChatController implements Initializable {
     
     // UI Elements
@@ -42,6 +44,7 @@ public class ChatController implements Initializable {
     @FXML private VBox noChatSelectedPane;
     @FXML private StackPane mainChatPane;
     @FXML private HBox chatMainContainer;
+    // УДАЛИЛИ: @FXML private HBox messageInputWrapper;
     
     // Services and State
     private SupabaseService supabaseService;
@@ -74,6 +77,7 @@ public class ChatController implements Initializable {
         
         // Устанавливаем растягивание
         HBox.setHgrow(chatArea, Priority.ALWAYS);
+        HBox.setHgrow(noChatSelectedPane, Priority.ALWAYS);
     }
     
     private void setupChatUI() {
@@ -93,7 +97,7 @@ public class ChatController implements Initializable {
                 } else {
                     HBox hbox = new HBox(12);
                     hbox.setAlignment(Pos.CENTER_LEFT);
-                    hbox.setPadding(new Insets(10, 15, 10, 15));
+                    hbox.setPadding(new Insets(12, 16, 12, 16));
                     hbox.setPrefHeight(70);
                     
                     // Аватар с CSS классом
@@ -110,7 +114,7 @@ public class ChatController implements Initializable {
                     
                     // Имя собеседника с CSS классом
                     Label nameLabel = new Label(chat.getOtherUser().getFullName());
-                    nameLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+                    nameLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 14));
                     nameLabel.setMaxWidth(Double.MAX_VALUE);
                     HBox.setHgrow(nameLabel, Priority.ALWAYS);
                     nameLabel.getStyleClass().add("chat-list-name");
@@ -122,7 +126,7 @@ public class ChatController implements Initializable {
                         timeStr = time.format(TIME_FORMATTER);
                     }
                     Label timeLabel = new Label(timeStr);
-                    timeLabel.setFont(Font.font("System", 12));
+                    timeLabel.setFont(Font.font("Segoe UI", 12));
                     timeLabel.getStyleClass().add("chat-list-time");
                     
                     nameTimeBox.getChildren().addAll(nameLabel, timeLabel);
@@ -136,7 +140,7 @@ public class ChatController implements Initializable {
                     }
                     
                     Label lastMsgLabel = new Label(lastMessage);
-                    lastMsgLabel.setFont(Font.font("System", 13));
+                    lastMsgLabel.setFont(Font.font("Segoe UI", 13));
                     lastMsgLabel.getStyleClass().add("chat-list-preview");
                     
                     // Непрочитанные с CSS классами
@@ -146,7 +150,7 @@ public class ChatController implements Initializable {
                         badge.getStyleClass().add("chat-unread-badge");
                         
                         Label countLabel = new Label(String.valueOf(chat.getUnreadCount()));
-                        countLabel.setFont(Font.font("System", FontWeight.BOLD, 10));
+                        countLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 10));
                         countLabel.getStyleClass().add("chat-unread-count");
                         
                         badgeContainer.getChildren().addAll(badge, countLabel);
@@ -200,18 +204,18 @@ public class ChatController implements Initializable {
                     
                     HBox messageContainer = new HBox();
                     messageContainer.setAlignment(isMyMessage ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
-                    messageContainer.setPadding(new Insets(5, 15, 5, 15));
+                    messageContainer.setPadding(new Insets(6, 0, 6, 0));
                     
                     VBox messageBubble = new VBox(3);
-                    messageBubble.setMaxWidth(400);
+                    messageBubble.setMaxWidth(500);
                     messageBubble.setAlignment(isMyMessage ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
                     
                     // Message text
                     Label textLabel = new Label(message.getMessageText());
                     textLabel.setWrapText(true);
-                    textLabel.setMaxWidth(380);
-                    textLabel.setPadding(new Insets(10, 15, 10, 15));
-                    textLabel.setFont(Font.font("System", 14));
+                    textLabel.setMaxWidth(480);
+                    textLabel.setPadding(new Insets(12, 18, 12, 18));
+                    textLabel.setFont(Font.font("Segoe UI", 14));
                     textLabel.getStyleClass().add("message-text");
                     
                     // Message time
@@ -220,7 +224,7 @@ public class ChatController implements Initializable {
                         timeStr = message.getCreatedAt().format(TIME_FORMATTER);
                     }
                     Label timeLabel = new Label(timeStr);
-                    timeLabel.setFont(Font.font("System", 11));
+                    timeLabel.setFont(Font.font("Segoe UI", 11));
                     
                     // Добавляем CSS классы в зависимости от отправителя
                     if (isMyMessage) {
@@ -274,6 +278,7 @@ public class ChatController implements Initializable {
         // CSS классы для элементов ввода
         messageInputArea.getStyleClass().add("message-input-area");
         sendMessageButton.getStyleClass().add("chat-send-button");
+        // УДАЛИЛИ: messageInputWrapper.getStyleClass().add("message-input-wrapper");
         chatPartnerNameLabel.getStyleClass().add("chat-header-name");
         chatPartnerInfoLabel.getStyleClass().add("chat-header-info");
         chatArea.getStyleClass().add("chat-area");

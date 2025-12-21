@@ -3,16 +3,6 @@
    Все стили для системы чатов
    ============================================ */
 
-/* Цветовая палитра чатов */
-.chat-primary-color {
-    -fx-main: #ec4b6e;
-    -fx-main-dark: #d64062;
-    -fx-main-light: #ff6b9d;
-    -fx-bg-light: #fff5f7;
-    -fx-bg-lighter: #fffafb;
-    -fx-border-light: #ffe6ea;
-}
-
 /* Основной контейнер чатов */
 .chat-main-container {
     -fx-background-color: #fff5f7;
@@ -20,13 +10,21 @@
     -fx-spacing: 0;
 }
 
-/* Левая панель: Список чатов */
+/* Разделитель между панелями */
+.chat-separator {
+    -fx-background-color: #e0e0e0;
+    -fx-padding: 0;
+    -fx-pref-width: 1px;
+}
+
+/* Левая панель: Список чатов (фиксированная ширина) */
 .chat-list-panel {
     -fx-background-color: white;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 0);
-    -fx-pref-width: 300px;
-    -fx-min-width: 250px;
-    -fx-max-width: 350px;
+    -fx-pref-width: 320px;
+    -fx-min-width: 280px;
+    -fx-max-width: 380px;
+    -fx-border-color: transparent;
 }
 
 .chat-list-header {
@@ -46,16 +44,18 @@
     -fx-padding: 5 0 0 0;
 }
 
-/* Правая панель: Область чата */
+/* Правая панель: Область чата (растягивается на всё пространство) */
 .chat-area {
     -fx-background-color: #fff5f7;
     -fx-padding: 0;
+    -fx-min-width: 400px;
 }
 
-/* Когда чат не выбран */
+/* Когда чат не выбран (занимает ВСЁ пространство справа) */
 .no-chat-pane {
     -fx-background-color: #fff5f7;
     -fx-alignment: center;
+    -fx-min-width: 400px;
 }
 
 .no-chat-icon {
@@ -82,7 +82,7 @@
 }
 
 .chat-list-view .list-cell {
-    -fx-padding: 10px 15px;
+    -fx-padding: 12px 16px;
     -fx-background-color: transparent;
     -fx-border-width: 0;
     -fx-pref-height: 70px;
@@ -141,7 +141,7 @@
     -fx-background-color: white;
     -fx-border-color: #f0f0f0;
     -fx-border-width: 0 0 1px 0;
-    -fx-padding: 15px 25px;
+    -fx-padding: 18px 25px;
 }
 
 .chat-header-avatar {
@@ -163,11 +163,11 @@
 .messages-list-view {
     -fx-background-color: #fff5f7;
     -fx-border-width: 0;
-    -fx-padding: 10px 0;
+    -fx-padding: 15px 25px;
 }
 
 .messages-list-view .list-cell {
-    -fx-padding: 5px 15px;
+    -fx-padding: 6px 0;
     -fx-background-color: transparent;
 }
 
@@ -175,27 +175,29 @@
 .message-bubble-mine {
     -fx-background-color: #ec4b6e;
     -fx-background-radius: 18px 4px 18px 18px;
-    -fx-padding: 10px 15px;
-    -fx-max-width: 400px;
+    -fx-padding: 12px 18px;
+    -fx-max-width: 500px;
 }
 
 .message-bubble-mine .message-text {
     -fx-font-size: 14px;
     -fx-text-fill: white;
     -fx-wrap-text: true;
+    -fx-font-family: "Segoe UI", "System";
 }
 
 .message-bubble-mine .message-time {
     -fx-font-size: 11px;
     -fx-text-fill: rgba(255, 255, 255, 0.8);
+    -fx-font-family: "Segoe UI", "System";
 }
 
 /* Сообщения от собеседника (белые) */
 .message-bubble-theirs {
     -fx-background-color: white;
     -fx-background-radius: 4px 18px 18px 18px;
-    -fx-padding: 10px 15px;
-    -fx-max-width: 400px;
+    -fx-padding: 12px 18px;
+    -fx-max-width: 500px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);
 }
 
@@ -203,50 +205,86 @@
     -fx-font-size: 14px;
     -fx-text-fill: #333333;
     -fx-wrap-text: true;
+    -fx-font-family: "Segoe UI", "System";
 }
 
 .message-bubble-theirs .message-time {
     -fx-font-size: 11px;
     -fx-text-fill: #999999;
+    -fx-font-family: "Segoe UI", "System";
 }
 
-/* ===== ПАНЕЛЬ ВВОДА СООБЩЕНИЯ ===== */
+/* ===== НОВАЯ ПАНЕЛЬ ВВОДА СООБЩЕНИЯ ===== */
 .message-input-container {
     -fx-background-color: white;
     -fx-border-color: #f0f0f0;
     -fx-border-width: 1px 0 0 0;
-    -fx-padding: 15px 25px;
+    -fx-padding: 20px 25px;
+}
+
+.message-input-wrapper {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-padding: 0;
+    -fx-alignment: center;
+    -fx-spacing: 0;
 }
 
 .message-input-area {
-    -fx-background-color: white;
-    -fx-border-color: #e0e0e0;
-    -fx-border-radius: 20px;
-    -fx-background-radius: 20px;
-    -fx-padding: 12px 20px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-padding: 15px 20px;
     -fx-font-size: 14px;
     -fx-pref-height: 50px;
+    -fx-font-family: "Segoe UI", "System";
+    -fx-wrap-text: true;
 }
 
 .message-input-area:focused {
-    -fx-border-color: #ec4b6e;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.message-input-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.message-input-area .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.message-input-area .scroll-pane .content {
+    -fx-background-color: transparent;
 }
 
 .chat-send-button {
-    -fx-background-color: linear-gradient(to right, #ec4b6e, #ff6b9d);
+    -fx-background-color: #ec4b6e;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
-    -fx-padding: 12px 30px;
-    -fx-border-radius: 20px;
-    -fx-background-radius: 20px;
+    -fx-padding: 0 25px;
+    -fx-border-radius: 0 25px 25px 0;
+    -fx-background-radius: 0 25px 25px 0;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(236,75,110,0.3), 8, 0, 0, 2);
+    -fx-pref-height: 50px;
+    -fx-min-width: 80px;
+    -fx-font-family: "Segoe UI", "System";
 }
 
 .chat-send-button:hover {
-    -fx-background-color: linear-gradient(to right, #d64062, #ff5a8c);
-    -fx-effect: dropshadow(gaussian, rgba(212,61,94,0.4), 10, 0, 0, 3);
+    -fx-background-color: #d64062;
+}
+
+.chat-send-button:pressed {
+    -fx-background-color: #c53554;
+}
+
+.send-button-hover {
+    -fx-background-color: #d64062 !important;
 }
 
 /* ===== ТЕМНЫЙ РЕЖИМ (дополнительно) ===== */

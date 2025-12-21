@@ -42,7 +42,6 @@ public class DashboardController implements Initializable {
     @FXML private Button logoutBtn;
     @FXML private Button profileBtn;
     @FXML private Button chatsBtn;
-    @FXML private Button discoverBtn;
     @FXML private Button likesBtn;
     @FXML private Button matchesBtn;
     // @FXML private Button notificationsBtn; // Раскомментировать если добавишь в FXML
@@ -54,7 +53,6 @@ public class DashboardController implements Initializable {
     // Content areas
     @FXML private VBox profileContent;
     @FXML private VBox chatsContent;
-    @FXML private VBox discoverContent;
     @FXML private VBox likesContent;
     @FXML private VBox matchesContent;
     // @FXML private VBox notificationsContent; // Раскомментировать если добавишь в FXML
@@ -152,7 +150,6 @@ public class DashboardController implements Initializable {
         
         profileBtn.getStyleClass().remove(activeStyle);
         chatsBtn.getStyleClass().remove(activeStyle);
-        discoverBtn.getStyleClass().remove(activeStyle);
         likesBtn.getStyleClass().remove(activeStyle);
         matchesBtn.getStyleClass().remove(activeStyle);
         
@@ -165,7 +162,6 @@ public class DashboardController implements Initializable {
     private void hideAllContent() {
         profileContent.setVisible(false);
         chatsContent.setVisible(false);
-        discoverContent.setVisible(false);
         likesContent.setVisible(false);
         matchesContent.setVisible(false);
         
@@ -200,17 +196,6 @@ public class DashboardController implements Initializable {
         if (chatPanelController != null) {
             chatPanelController.loadUserChats();
         }
-    }
-    
-    @FXML
-    private void showDiscover() {
-        System.out.println("Showing discover");
-        resetNavButtons();
-        discoverBtn.getStyleClass().add("nav-btn-active");
-        
-        hideAllContent();
-        discoverContent.setVisible(true);
-        statusLabel.setText("Discovering new people");
     }
     
     @FXML

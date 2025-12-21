@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -19,7 +20,7 @@
     <!-- Основной контейнер -->
     <HBox fx:id="chatMainContainer" spacing="0" StackPane.alignment="CENTER">
         
-        <!-- ЛЕВАЯ ПАНЕЛЬ: Список диалогов -->
+        <!-- ЛЕВАЯ ПАНЕЛЬ: Список диалогов (фиксированная ширина) -->
         <VBox styleClass="chat-list-panel">
             
             <!-- Заголовок Conversations -->
@@ -32,6 +33,9 @@
             <ListView fx:id="chatsListView" VBox.vgrow="ALWAYS" 
                       styleClass="chat-list-view" />
         </VBox>
+        
+        <!-- РАЗДЕЛИТЕЛЬ между панелями -->
+        <Separator orientation="VERTICAL" styleClass="chat-separator" />
         
         <!-- ЦЕНТРАЛЬНАЯ ПАНЕЛЬ: Область чата -->
         <VBox fx:id="chatArea" HBox.hgrow="ALWAYS" visible="false"
@@ -56,18 +60,20 @@
             <ListView fx:id="messagesListView" VBox.vgrow="ALWAYS" 
                       styleClass="messages-list-view" />
             
-            <!-- Поле ввода сообщения -->
+            <!-- ПАНЕЛЬ ВВОДА СООБЩЕНИЙ -->
             <HBox styleClass="message-input-container">
-                <TextArea fx:id="messageInputArea" HBox.hgrow="ALWAYS" 
-                          promptText="Type your message..."
-                          styleClass="message-input-area" />
-                <Button fx:id="sendMessageButton" text="Send" 
-                        styleClass="chat-send-button"
-                        onMouseEntered="#onSendButtonHover" onMouseExited="#onSendButtonExit" />
+                <HBox styleClass="message-input-wrapper" HBox.hgrow="ALWAYS">
+                    <TextArea fx:id="messageInputArea" HBox.hgrow="ALWAYS" 
+                              promptText="Type a message..."
+                              styleClass="message-input-area" />
+                    <Button fx:id="sendMessageButton" text="Send" 
+                            styleClass="chat-send-button"
+                            onMouseEntered="#onSendButtonHover" onMouseExited="#onSendButtonExit" />
+                </HBox>
             </HBox>
         </VBox>
         
-        <!-- Правая панель: Чат не выбран -->
+        <!-- Правая панель: Чат не выбран (занимает всё оставшееся пространство) -->
         <VBox fx:id="noChatSelectedPane" alignment="CENTER" HBox.hgrow="ALWAYS" visible="true"
               styleClass="no-chat-pane">
             <VBox alignment="CENTER" spacing="20">
