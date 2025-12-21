@@ -1,12 +1,14 @@
 package com.example.tetoo.gui.controllers;
 
 import com.example.tetoo.auth.SessionManager;
+import com.example.tetoo.gui.controllers.ChatController;
 import com.example.tetoo.model.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -16,13 +18,17 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.Node;
+
 
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
-    
+
+    private double xOffset = 0;
+    private double yOffset = 0;
     // Header and navigation
     @FXML private Label welcomeLabel;
     @FXML private Label userNameLabel;
@@ -55,8 +61,23 @@ public class DashboardController implements Initializable {
     @FXML private VBox chatsContent;
     @FXML private VBox likesContent;
     @FXML private VBox matchesContent;
-    // @FXML private VBox notificationsContent; // Раскомментировать если добавишь в FXML
-    
+
+    @FXML
+    private void handleMousePressed(MouseEvent event) {
+        // Запоминаем позицию мыши относительно окна
+        xOffset = event.getSceneX();
+        yOffset = event.getSceneY();
+    }
+    @FXML
+    private void handleMouseDragged(MouseEvent event) {
+        // Получаем Stage (окно)
+        Node node = (Node) event.getSource();
+        Stage stage = (Stage) node.getScene().getWindow();
+        
+        // Двигаем окно
+        stage.setX(event.getScreenX() - xOffset);
+        stage.setY(event.getScreenY() - yOffset);
+    }
     // Chat controller reference (injected via fx:include)
     @FXML private ChatController chatPanelController;
     

@@ -19,7 +19,9 @@
 
     <!-- Top Bar -->
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="top-bar">
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="top-bar"
+            onMousePressed="#handleMousePressed" 
+            onMouseDragged="#handleMouseDragged">
             <ImageView fitHeight="40.0" fitWidth="40.0" preserveRatio="true">
                 <Image url="@../images/tetoo_logo_small.png" />
             </ImageView>
