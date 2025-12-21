@@ -30,8 +30,6 @@ public class Main extends Application {
             
             // Test database connection
             testSupabaseConnection();
-            supabaseService.createTestChat(10, 11);
-            
             Platform.runLater(() -> showMainScreen(primaryStage));
         });
         splashScreen.show();

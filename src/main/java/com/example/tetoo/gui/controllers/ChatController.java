@@ -14,9 +14,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,7 +41,8 @@ public class ChatController implements Initializable {
     @FXML private Label chatPartnerInfoLabel;
     @FXML private VBox chatArea;
     @FXML private VBox noChatSelectedPane;
-    @FXML private Label chatsTitleLabel;
+    @FXML private StackPane mainChatPane;
+    @FXML private HBox chatMainContainer;
     
     // Services and State
     private SupabaseService supabaseService;
@@ -47,6 +52,8 @@ public class ChatController implements Initializable {
     // Constants
     private static final DateTimeFormatter TIME_FORMATTER = 
         DateTimeFormatter.ofPattern("HH:mm");
+    private static final DateTimeFormatter DATE_FORMATTER = 
+        DateTimeFormatter.ofPattern("dd MMM, HH:mm");
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -65,9 +72,16 @@ public class ChatController implements Initializable {
         
         // Start auto-updates
         startChatUpdates();
+        
+        // Устанавливаем растягивание
+        HBox.setHgrow(chatArea, Priority.ALWAYS);
     }
     
     private void setupChatUI() {
+        // Настраиваем основной контейнер
+        chatMainContainer.setSpacing(0);
+        chatMainContainer.setStyle("-fx-background-color: #fff5f7;"); // Розовый фон
+        
         // Setup chats list view
         chatsListView.setCellFactory(param -> new ListCell<Chat>() {
             @Override
@@ -78,67 +92,108 @@ public class ChatController implements Initializable {
                     setGraphic(null);
                     setStyle("");
                 } else {
-                    HBox hbox = new HBox(10);
+                    HBox hbox = new HBox(12);
                     hbox.setAlignment(Pos.CENTER_LEFT);
+                    hbox.setPadding(new Insets(10, 15, 10, 15));
+                    hbox.setPrefHeight(70);
                     
-                    // Avatar
-                    Circle avatar = new Circle(20);
-                    avatar.setFill(Color.LIGHTGRAY);
+                    // Аватар
+                    Circle avatar = new Circle(25);
+                    avatar.setFill(Color.web("#ec4b6e"));
                     
-                    VBox vbox = new VBox(2);
+                    VBox vbox = new VBox(4);
+                    vbox.setAlignment(Pos.CENTER_LEFT);
+                    vbox.setPrefHeight(60);
                     
-                    // Partner name
+                    HBox nameTimeBox = new HBox();
+                    nameTimeBox.setAlignment(Pos.CENTER_LEFT);
+                    HBox.setHgrow(nameTimeBox, Priority.ALWAYS);
+                    
+                    // Имя собеседника
                     Label nameLabel = new Label(chat.getOtherUser().getFullName());
-                    nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+                    nameLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+                    nameLabel.setTextFill(Color.web("#333333"));
+                    nameLabel.setMaxWidth(Double.MAX_VALUE);
+                    HBox.setHgrow(nameLabel, Priority.ALWAYS);
                     
-                    // Last message preview
-                    String lastMessage = "No messages";
+                    // Время последнего сообщения
+                    String timeStr = "";
+                    if (chat.getLastMessage() != null && chat.getLastMessage().getCreatedAt() != null) {
+                        LocalDateTime time = chat.getLastMessage().getCreatedAt();
+                        timeStr = time.format(TIME_FORMATTER);
+                    }
+                    Label timeLabel = new Label(timeStr);
+                    timeLabel.setFont(Font.font("System", 12));
+                    timeLabel.setTextFill(Color.web("#888888"));
+                    
+                    nameTimeBox.getChildren().addAll(nameLabel, timeLabel);
+                    
+                    // Последнее сообщение
+                    String lastMessage = "No messages yet";
                     if (chat.getLastMessage() != null) {
                         String msgText = chat.getLastMessage().getMessageText();
-                        lastMessage = msgText.length() > 30 ? 
-                                     msgText.substring(0, 30) + "..." : msgText;
+                        lastMessage = msgText.length() > 35 ? 
+                                    msgText.substring(0, 35) + "..." : msgText;
                     }
                     
                     Label lastMsgLabel = new Label(lastMessage);
-                    lastMsgLabel.setStyle("-fx-text-fill: #666666; -fx-font-size: 12px;");
+                    lastMsgLabel.setFont(Font.font("System", 13));
+                    lastMsgLabel.setTextFill(Color.web("#666666"));
                     
-                    // Unread badge and time
-                    HBox statusBox = new HBox(5);
+                    // Непрочитанные
+                    StackPane badgeContainer = new StackPane();
                     if (chat.getUnreadCount() > 0) {
                         Circle badge = new Circle(8);
-                        badge.setFill(Color.RED);
-                        Label countLabel = new Label(String.valueOf(chat.getUnreadCount()));
-                        countLabel.setTextFill(Color.WHITE);
-                        countLabel.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
+                        badge.setFill(Color.web("#ff3b30"));
                         
-                        StackPane badgePane = new StackPane(badge, countLabel);
-                        statusBox.getChildren().add(badgePane);
+                        Label countLabel = new Label(String.valueOf(chat.getUnreadCount()));
+                        countLabel.setFont(Font.font("System", FontWeight.BOLD, 10));
+                        countLabel.setTextFill(Color.WHITE);
+                        
+                        badgeContainer.getChildren().addAll(badge, countLabel);
+                        StackPane.setAlignment(badge, Pos.CENTER);
+                        StackPane.setAlignment(countLabel, Pos.CENTER);
                     }
                     
-                    // Last message time
-                    if (chat.getLastMessage() != null && chat.getLastMessage().getCreatedAt() != null) {
-                        LocalDateTime time = chat.getLastMessage().getCreatedAt();
-                        String timeStr = time.format(TIME_FORMATTER);
-                        Label timeLabel = new Label(timeStr);
-                        timeLabel.setStyle("-fx-text-fill: #888888; -fx-font-size: 11px;");
-                        statusBox.getChildren().add(timeLabel);
-                    }
-                    
-                    vbox.getChildren().addAll(nameLabel, lastMsgLabel, statusBox);
-                    hbox.getChildren().addAll(avatar, vbox);
+                    vbox.getChildren().addAll(nameTimeBox, lastMsgLabel);
+                    hbox.getChildren().addAll(avatar, vbox, badgeContainer);
                     
                     setGraphic(hbox);
                     setText(null);
                     
-                    // Highlight if unread
-                    if (chat.getUnreadCount() > 0) {
-                        setStyle("-fx-background-color: #EDE7F6;");
+                    // Стили для ячейки
+                    if (isSelected()) {
+                        setStyle("-fx-background-color: #ffe6ea; -fx-border-width: 0;");
+                    } else if (chat.getUnreadCount() > 0) {
+                        setStyle("-fx-background-color: #fff0f2; -fx-border-width: 0;");
                     } else {
-                        setStyle("");
+                        setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
                     }
+                    
+                    // Hover эффект
+                    setOnMouseEntered(e -> {
+                        if (!isSelected()) {
+                            setStyle("-fx-background-color: #ffe6ea; -fx-border-width: 0;");
+                        }
+                    });
+                    
+                    setOnMouseExited(e -> {
+                        if (!isSelected()) {
+                            if (chat.getUnreadCount() > 0) {
+                                setStyle("-fx-background-color: #fff0f2; -fx-border-width: 0;");
+                            } else {
+                                setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
+                            }
+                        }
+                    });
                 }
             }
         });
+        
+        // Настройка ширины списка чатов
+        chatsListView.setPrefWidth(300);
+        chatsListView.setMinWidth(250);
+        chatsListView.setMaxWidth(350);
         
         // Setup messages list view
         messagesListView.setCellFactory(param -> new ListCell<Message>() {
@@ -152,16 +207,20 @@ public class ChatController implements Initializable {
                     Integer currentUserId = SessionManager.getInstance().getCurrentUserId();
                     boolean isMyMessage = message.isFromUser(currentUserId);
                     
-                    HBox messageBox = new HBox(10);
-                    messageBox.setAlignment(isMyMessage ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+                    HBox messageContainer = new HBox();
+                    messageContainer.setAlignment(isMyMessage ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+                    messageContainer.setPadding(new Insets(5, 15, 5, 15));
                     
-                    VBox contentBox = new VBox(3);
+                    VBox messageBubble = new VBox(3);
+                    messageBubble.setMaxWidth(400);
+                    messageBubble.setAlignment(isMyMessage ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
                     
                     // Message text
                     Label textLabel = new Label(message.getMessageText());
                     textLabel.setWrapText(true);
-                    textLabel.setMaxWidth(300);
-                    textLabel.setPadding(new Insets(8, 12, 8, 12));
+                    textLabel.setMaxWidth(380);
+                    textLabel.setPadding(new Insets(10, 15, 10, 15));
+                    textLabel.setFont(Font.font("System", 14));
                     
                     // Message time
                     String timeStr = "";
@@ -169,38 +228,45 @@ public class ChatController implements Initializable {
                         timeStr = message.getCreatedAt().format(TIME_FORMATTER);
                     }
                     Label timeLabel = new Label(timeStr);
-                    timeLabel.setStyle("-fx-text-fill: #888888; -fx-font-size: 10px;");
+                    timeLabel.setFont(Font.font("System", 11));
                     
                     if (isMyMessage) {
-                        // My message (right)
+                        // My message (right) - фиолетовый
                         textLabel.setStyle(
                             "-fx-background-color: #8A2BE2; " +
+                            "-fx-background-radius: 18px 4px 18px 18px; " +
                             "-fx-text-fill: white; " +
-                            "-fx-background-radius: 15px; " +
-                            "-fx-border-radius: 15px;"
+                            "-fx-padding: 10 15;"
                         );
+                        textLabel.setTextFill(Color.WHITE);
+                        timeLabel.setTextFill(Color.web("#999999"));
                         timeLabel.setAlignment(Pos.CENTER_RIGHT);
-                        contentBox.setAlignment(Pos.CENTER_RIGHT);
                     } else {
-                        // Their message (left)
+                        // Their message (left) - белый
                         textLabel.setStyle(
-                            "-fx-background-color: #F0F0F0; " +
+                            "-fx-background-color: white; " +
+                            "-fx-background-radius: 4px 18px 18px 18px; " +
                             "-fx-text-fill: #333333; " +
-                            "-fx-background-radius: 15px; " +
-                            "-fx-border-radius: 15px;"
+                            "-fx-padding: 10 15; " +
+                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);"
                         );
+                        textLabel.setTextFill(Color.web("#333333"));
+                        timeLabel.setTextFill(Color.web("#999999"));
                         timeLabel.setAlignment(Pos.CENTER_LEFT);
-                        contentBox.setAlignment(Pos.CENTER_LEFT);
                     }
                     
-                    contentBox.getChildren().addAll(textLabel, timeLabel);
-                    messageBox.getChildren().add(contentBox);
+                    messageBubble.getChildren().addAll(textLabel, timeLabel);
+                    messageContainer.getChildren().add(messageBubble);
                     
-                    setGraphic(messageBox);
+                    setGraphic(messageContainer);
                     setText(null);
+                    setStyle("-fx-background-color: transparent;");
                 }
             }
         });
+        
+        // Настройка стиля списка сообщений
+        messagesListView.setStyle("-fx-background-color: #fff5f7; -fx-border-width: 0; -fx-padding: 10 0;");
         
         // Chat selection listener
         chatsListView.getSelectionModel().selectedItemProperty().addListener(
@@ -228,8 +294,37 @@ public class ChatController implements Initializable {
             }
         });
         
-        // Send button action
+        // Message input стиль
+        messageInputArea.setStyle(
+            "-fx-background-color: white; " +
+            "-fx-border-color: #e0e0e0; " +
+            "-fx-border-radius: 20; " +
+            "-fx-background-radius: 20; " +
+            "-fx-padding: 12 20; " +
+            "-fx-font-size: 14px; " +
+            "-fx-wrap-text: true;"
+        );
+        
+        // Send button action and стиль
         sendMessageButton.setOnAction(event -> handleSendMessage());
+        sendMessageButton.setStyle(
+            "-fx-background-color: linear-gradient(to right, #ec4b6e, #ff6b9d); " +
+            "-fx-text-fill: white; " +
+            "-fx-font-weight: bold; " +
+            "-fx-font-size: 14px; " +
+            "-fx-padding: 12 30; " +
+            "-fx-border-radius: 20; " +
+            "-fx-background-radius: 20; " +
+            "-fx-cursor: hand; " +
+            "-fx-effect: dropshadow(gaussian, rgba(236,75,110,0.3), 8, 0, 0, 2);"
+        );
+        
+        // Заголовок чата стиль
+        chatPartnerNameLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
+        chatPartnerNameLabel.setTextFill(Color.web("#333333"));
+        
+        chatPartnerInfoLabel.setFont(Font.font("System", 13));
+        chatPartnerInfoLabel.setTextFill(Color.web("#666666"));
         
         // Show "no chat selected" by default
         showNoChatSelected();
@@ -287,6 +382,36 @@ public class ChatController implements Initializable {
         }
     }
     
+    @FXML
+    public void onSendButtonHover() {
+        sendMessageButton.setStyle(
+            "-fx-background-color: linear-gradient(to right, #d43d5e, #ff5a8c); " +
+            "-fx-text-fill: white; " +
+            "-fx-font-weight: bold; " +
+            "-fx-font-size: 14px; " +
+            "-fx-padding: 12 30; " +
+            "-fx-border-radius: 20; " +
+            "-fx-background-radius: 20; " +
+            "-fx-cursor: hand; " +
+            "-fx-effect: dropshadow(gaussian, rgba(212,61,94,0.4), 10, 0, 0, 3);"
+        );
+    }
+
+    @FXML  
+    public void onSendButtonExit() {
+        sendMessageButton.setStyle(
+            "-fx-background-color: linear-gradient(to right, #ec4b6e, #ff6b9d); " +
+            "-fx-text-fill: white; " +
+            "-fx-font-weight: bold; " +
+            "-fx-font-size: 14px; " +
+            "-fx-padding: 12 30; " +
+            "-fx-border-radius: 20; " +
+            "-fx-background-radius: 20; " +
+            "-fx-cursor: hand; " +
+            "-fx-effect: dropshadow(gaussian, rgba(236,75,110,0.3), 8, 0, 0, 2);"
+        );
+    }
+
     @FXML
     private void handleSendMessage() {
         if (selectedChat != null && !messageInputArea.getText().trim().isEmpty()) {

@@ -121,7 +121,7 @@
             </VBox>
 
             <!-- Chats content (hidden by default) -->
-            <VBox fx:id="chatsContent" spacing="10.0" visible="false" style="-fx-padding: 20;">
+            <VBox fx:id="chatsContent" spacing="0" visible="false" StackPane.alignment="CENTER">
                 <!-- Include chat panel -->
                 <fx:include source="chat_panel.fxml" fx:id="chatPanel" />
             </VBox>
