@@ -33,27 +33,38 @@
             <artifactId>javafx-graphics</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-media</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
 
-        <!-- Supabase/HTTP зависимости от вашего товарища -->
+        <!-- JSON Processing -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
         </dependency>
+
+        <!-- HTTP Client -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.14</version>
         </dependency>
+
+        <!-- BCrypt Password Hashing (Spring Security Crypto) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>5.8.0</version>
+        </dependency>
+
+        <!-- Logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.4.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.9</version>
         </dependency>
     </dependencies>
 
@@ -78,8 +89,6 @@
                     <options>
                         <option>--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED</option>
                         <option>--add-opens=javafx.controls/javafx.scene.control=ALL-UNNAMED</option>
-                        <option>--add-opens=javafx.media/javafx.scene.media=ALL-UNNAMED</option>
-                        <option>--add-modules=javafx.controls,javafx.fxml,javafx.graphics,javafx.media</option>
                     </options>
                 </configuration>
             </plugin>

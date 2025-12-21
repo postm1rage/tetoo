@@ -3,6 +3,7 @@ package com.example.tetoo.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.example.tetoo.config.SupabaseConfig;
 import com.example.tetoo.model.User;
@@ -14,11 +15,14 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SupabaseService {
     private static final Gson gson = new Gson();
+    private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
     // Method for testing connection and getting all users
     public List<User> getAllUsers() {
@@ -102,7 +106,7 @@ public class SupabaseService {
         }
     }
 
-    // Method to check if user exists by email (for login prototype)
+    // Method to check if user exists by email (old method, keep for compatibility)
     public User getUserByEmail(String email) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         
@@ -155,11 +159,15 @@ public class SupabaseService {
         }
     }
 
-    // Method for user registration
+    // Method for user registration with bcrypt hashing
     public boolean registerUser(String email, String password) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         
         try {
+            // Hash password with bcrypt
+            String hashedPassword = passwordEncoder.encode(password);
+            System.out.println("Password hashed with bcrypt: " + hashedPassword);
+            
             // Create POST request to users table
             String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.USERS_TABLE;
             HttpPost request = new HttpPost(url);
@@ -168,12 +176,12 @@ public class SupabaseService {
             request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
             request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
             request.setHeader("Content-Type", "application/json");
-            request.setHeader("Prefer", "return=representation"); // Return created record
+            request.setHeader("Prefer", "return=representation");
             
-            // Create JSON request body
+            // Create JSON request body with hashed password
             String jsonBody = String.format(
                 "{\"email\": \"%s\", \"password_hash\": \"%s\", \"is_verified\": false}",
-                email, password
+                email, hashedPassword
             );
             
             StringEntity entity = new StringEntity(jsonBody);
@@ -202,6 +210,87 @@ public class SupabaseService {
             System.out.println("Error during registration: " + e.getMessage());
             e.printStackTrace();
             return false;
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    // Method to login with password verification using bcrypt
+    public User loginWithPassword(String email, String password) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        
+        try {
+            // Get user with password_hash from database
+            String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.USERS_TABLE + 
+                        "?email=eq." + email + "&select=*";
+            HttpGet request = new HttpGet(url);
+            
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+            request.setHeader("Content-Type", "application/json");
+            
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            
+            if (statusCode == 200) {
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+                
+                JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
+                
+                if (jsonArray.size() > 0) {
+                    JsonObject userObject = jsonArray.get(0).getAsJsonObject();
+                    
+                    // Get stored password hash
+                    String storedHash = userObject.get("password_hash").getAsString();
+                    
+                    // Check password
+                    boolean passwordValid = false;
+                    
+                    if (storedHash != null && !storedHash.isEmpty()) {
+                        // Check if hash is bcrypt format (starts with $2)
+                        if (storedHash.startsWith("$2")) {
+                            // Verify password with bcrypt
+                            try {
+                                passwordValid = passwordEncoder.matches(password, storedHash);
+                                System.out.println("BCrypt verification: " + passwordValid);
+                            } catch (Exception e) {
+                                System.out.println("BCrypt error: " + e.getMessage());
+                                passwordValid = false;
+                            }
+                        } else {
+                            // Legacy or plain text (for test users)
+                            System.out.println("Warning: Plain text comparison for hash: " + storedHash);
+                            passwordValid = storedHash.equals(password);
+                        }
+                    }
+                    
+                    if (passwordValid) {
+                        // Password is correct, create User object
+                        User user = gson.fromJson(userObject, User.class);
+                        System.out.println("Login successful for: " + email);
+                        return user;
+                    } else {
+                        System.out.println("Invalid password for: " + email);
+                        return null;
+                    }
+                } else {
+                    System.out.println("User not found: " + email);
+                    return null;
+                }
+            } else {
+                System.out.println("Error fetching user. Code: " + statusCode);
+                return null;
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error during login: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         } finally {
             try {
                 httpClient.close();

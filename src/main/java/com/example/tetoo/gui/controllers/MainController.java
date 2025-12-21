@@ -123,28 +123,32 @@ public class MainController implements Initializable {
         
         if (email.isEmpty() || password.isEmpty()) {
             System.out.println("Login error: Email and password are required");
+            // TODO: Show error in UI
             return;
         }
         
         if (!isValidEmail(email)) {
             System.out.println("Login error: Invalid email format");
+            // TODO: Show error in UI
             return;
         }
         
-        // Check if user exists in database (prototype - any password accepted)
-        System.out.println("Checking user in database...");
-        User user = supabaseService.getUserByEmail(email);
+        // Authenticate with password check
+        System.out.println("Authenticating user with password verification...");
+        User user = supabaseService.loginWithPassword(email, password);
         
         if (user != null) {
-            // For prototype, we accept any password
+            // Login successful
             SessionManager.getInstance().login(user);
             System.out.println("Login successful for: " + email);
             
             // Switch to dashboard
             switchToDashboard();
         } else {
-            System.out.println("Login failed: User not found");
+            System.out.println("Login failed: Invalid email or password");
             // TODO: Show error message to user
+            // Clear password field for security
+            loginPasswordField.clear();
         }
     }
 
@@ -170,21 +174,24 @@ public class MainController implements Initializable {
             return;
         }
         
-        // Call Supabase service to register user
-        System.out.println("Attempting to register user...");
+        // Register user with bcrypt hashing
+        System.out.println("Registering user with bcrypt password hashing...");
         boolean success = supabaseService.registerUser(email, password);
         
         if (success) {
             System.out.println("Registration successful!");
             
-            // Auto-login after registration (get the created user)
-            User newUser = supabaseService.getUserByEmail(email);
+            // Auto-login after registration
+            User newUser = supabaseService.loginWithPassword(email, password);
             if (newUser != null) {
                 SessionManager.getInstance().login(newUser);
                 System.out.println("Auto-login after registration");
                 
                 // Switch to dashboard
                 switchToDashboard();
+            } else {
+                System.out.println("Auto-login failed after registration");
+                // User should try manual login
             }
             
             // Clear fields
