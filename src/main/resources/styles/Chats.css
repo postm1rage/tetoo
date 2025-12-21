@@ -1,188 +1,267 @@
-/* Chats Specific Styles */
+/* ============================================
+   CHATS SPECIFIC STYLES
+   Все стили для системы чатов
+   ============================================ */
 
-/* Split Pane */
-.chat-split-pane {
-    -fx-background-color: transparent;
+/* Цветовая палитра чатов */
+.chat-primary-color {
+    -fx-main: #ec4b6e;
+    -fx-main-dark: #d64062;
+    -fx-main-light: #ff6b9d;
+    -fx-bg-light: #fff5f7;
+    -fx-bg-lighter: #fffafb;
+    -fx-border-light: #ffe6ea;
 }
 
-.chat-split-pane .split-pane-divider {
-    -fx-background-color: #e0e0e0;
-    -fx-padding: 0 1px 0 1px;
+/* Основной контейнер чатов */
+.chat-main-container {
+    -fx-background-color: #fff5f7;
+    -fx-padding: 0;
+    -fx-spacing: 0;
 }
 
-/* Chat List Panel */
+/* Левая панель: Список чатов */
 .chat-list-panel {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 1px 0 0;
-}
-
-.chat-header {
-    -fx-background-color: #f8f9fa;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 0 1px 0;
-}
-
-.search-field {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #e0e0e0;
-    -fx-border-radius: 20px;
-    -fx-background-radius: 20px;
-    -fx-padding: 10px 15px;
-    -fx-font-size: 14px;
-}
-
-.search-field:focused {
-    -fx-border-color: #ec4b6e;
-}
-
-.chat-scroll-pane {
-    -fx-background-color: transparent;
-}
-
-.chat-list {
-    -fx-background-color: transparent;
-}
-
-/* Chat Items */
-.chat-item {
     -fx-background-color: white;
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-padding: 15px;
-    -fx-border-color: #f0f0f0;
-    -fx-border-width: 1px;
-    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 0);
+    -fx-pref-width: 300px;
+    -fx-min-width: 250px;
+    -fx-max-width: 350px;
 }
 
-.chat-item:hover {
-    -fx-background-color: #f9f9f9;
-    -fx-border-color: #ec4b6e;
+.chat-list-header {
+    -fx-background-color: #fff5f7;
+    -fx-padding: 20px 20px 15px 20px;
 }
 
-.chat-item-selected {
-    -fx-background-color: #fff0f3;
-    -fx-border-color: #ec4b6e;
-}
-
-.chat-avatar {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
-}
-
-.chat-name {
-    -fx-font-size: 16px;
+.chat-list-title {
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
 }
 
-.chat-time {
-    -fx-font-size: 12px;
-    -fx-text-fill: #999999;
+.chat-list-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #888888;
+    -fx-padding: 5 0 0 0;
 }
 
-.chat-preview {
-    -fx-font-size: 14px;
-    -fx-text-fill: #666666;
-    -fx-max-width: 200px;
+/* Правая панель: Область чата */
+.chat-area {
+    -fx-background-color: #fff5f7;
+    -fx-padding: 0;
 }
 
-.chat-status {
-    -fx-spacing: 5px;
-}
-
-.unread-count {
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-background-color: #ec4b6e;
-    -fx-background-radius: 10px;
-    -fx-padding: 2px 6px;
-    -fx-min-width: 20px;
+/* Когда чат не выбран */
+.no-chat-pane {
+    -fx-background-color: #fff5f7;
     -fx-alignment: center;
 }
 
-/* Chat Window */
-.chat-window-panel {
-    -fx-background-color: #ffffff;
+.no-chat-icon {
+    -fx-fill: #f0f0f0;
 }
 
-.chat-window-header {
-    -fx-background-color: #f8f9fa;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 0 1px 0;
-    -fx-padding: 15px 20px;
+.no-chat-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666666;
 }
 
-.chat-status-text {
+.no-chat-subtitle {
     -fx-font-size: 14px;
-    -fx-text-fill: #4CAF50;
+    -fx-text-fill: #888888;
+    -fx-text-alignment: center;
+    -fx-max-width: 300px;
 }
 
-/* Messages */
-.messages-scroll-pane {
-    -fx-background-color: #f5f5f5;
-}
-
-.messages-container {
+/* ===== СТИЛИ ДЛЯ СПИСКА ЧАТОВ (ListView) ===== */
+.chat-list-view {
     -fx-background-color: transparent;
+    -fx-border-width: 0;
 }
 
-.message-bubble-other {
-    -fx-background-color: white;
-    -fx-border-radius: 15px 15px 15px 5px;
-    -fx-background-radius: 15px 15px 15px 5px;
+.chat-list-view .list-cell {
     -fx-padding: 10px 15px;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 1px;
-    -fx-max-width: 400px;
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-pref-height: 70px;
 }
 
-.message-bubble-you {
-    -fx-background-color: #ec4b6e;
-    -fx-border-radius: 15px 15px 5px 15px;
-    -fx-background-radius: 15px 15px 5px 15px;
-    -fx-padding: 10px 15px;
-    -fx-max-width: 400px;
+.chat-list-view .list-cell:hover {
+    -fx-background-color: #ffe6ea;
 }
 
-.message-text {
+.chat-list-view .list-cell:selected {
+    -fx-background-color: #ffe6ea;
+}
+
+.chat-list-view .list-cell:unread {
+    -fx-background-color: #fff0f2;
+}
+
+.chat-list-view .list-cell:unread:hover {
+    -fx-background-color: #ffe6ea;
+}
+
+/* Аватар в списке чатов */
+.chat-list-avatar {
+    -fx-fill: #ec4b6e;
+}
+
+.chat-list-name {
     -fx-font-size: 14px;
-    -fx-wrap-text: true;
-}
-
-.message-bubble-other .message-text {
+    -fx-font-weight: bold;
     -fx-text-fill: #333333;
 }
 
-.message-bubble-you .message-text {
+.chat-list-preview {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666666;
+}
+
+.chat-list-time {
+    -fx-font-size: 12px;
+    -fx-text-fill: #888888;
+}
+
+/* Бейдж непрочитанных */
+.chat-unread-badge {
+    -fx-fill: #ff3b30;
+}
+
+.chat-unread-count {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
     -fx-text-fill: white;
 }
 
-.message-time {
+/* ===== ЗАГОЛОВОК ОТКРЫТОГО ЧАТА ===== */
+.chat-header-bar {
+    -fx-background-color: white;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 15px 25px;
+}
+
+.chat-header-avatar {
+    -fx-fill: #ec4b6e;
+}
+
+.chat-header-name {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.chat-header-info {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666666;
+}
+
+/* ===== ОБЛАСТЬ СООБЩЕНИЙ ===== */
+.messages-list-view {
+    -fx-background-color: #fff5f7;
+    -fx-border-width: 0;
+    -fx-padding: 10px 0;
+}
+
+.messages-list-view .list-cell {
+    -fx-padding: 5px 15px;
+    -fx-background-color: transparent;
+}
+
+/* Сообщения от вас (розовые) */
+.message-bubble-mine {
+    -fx-background-color: #ec4b6e;
+    -fx-background-radius: 18px 4px 18px 18px;
+    -fx-padding: 10px 15px;
+    -fx-max-width: 400px;
+}
+
+.message-bubble-mine .message-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-wrap-text: true;
+}
+
+.message-bubble-mine .message-time {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+}
+
+/* Сообщения от собеседника (белые) */
+.message-bubble-theirs {
+    -fx-background-color: white;
+    -fx-background-radius: 4px 18px 18px 18px;
+    -fx-padding: 10px 15px;
+    -fx-max-width: 400px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);
+}
+
+.message-bubble-theirs .message-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    -fx-wrap-text: true;
+}
+
+.message-bubble-theirs .message-time {
     -fx-font-size: 11px;
     -fx-text-fill: #999999;
 }
 
-.message-bubble-you .message-time {
-    -fx-text-fill: rgba(255, 255, 255, 0.8);
-}
-
-/* Message Input */
+/* ===== ПАНЕЛЬ ВВОДА СООБЩЕНИЯ ===== */
 .message-input-container {
-    -fx-background-color: #f8f9fa;
-    -fx-border-color: #e0e0e0;
+    -fx-background-color: white;
+    -fx-border-color: #f0f0f0;
     -fx-border-width: 1px 0 0 0;
+    -fx-padding: 15px 25px;
 }
 
-.message-input {
+.message-input-area {
     -fx-background-color: white;
     -fx-border-color: #e0e0e0;
-    -fx-border-radius: 25px;
-    -fx-background-radius: 25px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
     -fx-padding: 12px 20px;
     -fx-font-size: 14px;
+    -fx-pref-height: 50px;
 }
 
-.message-input:focused {
+.message-input-area:focused {
     -fx-border-color: #ec4b6e;
+}
+
+.chat-send-button {
+    -fx-background-color: linear-gradient(to right, #ec4b6e, #ff6b9d);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 30px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(236,75,110,0.3), 8, 0, 0, 2);
+}
+
+.chat-send-button:hover {
+    -fx-background-color: linear-gradient(to right, #d64062, #ff5a8c);
+    -fx-effect: dropshadow(gaussian, rgba(212,61,94,0.4), 10, 0, 0, 3);
+}
+
+/* ===== ТЕМНЫЙ РЕЖИМ (дополнительно) ===== */
+.chat-dark .chat-list-panel {
+    -fx-background-color: #2d2d2d;
+}
+
+.chat-dark .chat-area {
+    -fx-background-color: #1e1e1e;
+}
+
+.chat-dark .message-bubble-theirs {
+    -fx-background-color: #3d3d3d;
+}
+
+.chat-dark .message-bubble-theirs .message-text {
+    -fx-text-fill: #ffffff;
 }

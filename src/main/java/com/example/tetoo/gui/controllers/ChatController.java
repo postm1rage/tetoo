@@ -15,7 +15,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
@@ -80,7 +79,7 @@ public class ChatController implements Initializable {
     private void setupChatUI() {
         // Настраиваем основной контейнер
         chatMainContainer.setSpacing(0);
-        chatMainContainer.setStyle("-fx-background-color: #fff5f7;"); // Розовый фон
+        chatMainContainer.getStyleClass().add("chat-main-container");
         
         // Setup chats list view
         chatsListView.setCellFactory(param -> new ListCell<Chat>() {
@@ -90,16 +89,16 @@ public class ChatController implements Initializable {
                 if (empty || chat == null) {
                     setText(null);
                     setGraphic(null);
-                    setStyle("");
+                    getStyleClass().removeAll("chat-cell-selected", "chat-cell-unread");
                 } else {
                     HBox hbox = new HBox(12);
                     hbox.setAlignment(Pos.CENTER_LEFT);
                     hbox.setPadding(new Insets(10, 15, 10, 15));
                     hbox.setPrefHeight(70);
                     
-                    // Аватар
+                    // Аватар с CSS классом
                     Circle avatar = new Circle(25);
-                    avatar.setFill(Color.web("#ec4b6e"));
+                    avatar.getStyleClass().add("chat-list-avatar");
                     
                     VBox vbox = new VBox(4);
                     vbox.setAlignment(Pos.CENTER_LEFT);
@@ -109,14 +108,14 @@ public class ChatController implements Initializable {
                     nameTimeBox.setAlignment(Pos.CENTER_LEFT);
                     HBox.setHgrow(nameTimeBox, Priority.ALWAYS);
                     
-                    // Имя собеседника
+                    // Имя собеседника с CSS классом
                     Label nameLabel = new Label(chat.getOtherUser().getFullName());
                     nameLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
-                    nameLabel.setTextFill(Color.web("#333333"));
                     nameLabel.setMaxWidth(Double.MAX_VALUE);
                     HBox.setHgrow(nameLabel, Priority.ALWAYS);
+                    nameLabel.getStyleClass().add("chat-list-name");
                     
-                    // Время последнего сообщения
+                    // Время последнего сообщения с CSS классом
                     String timeStr = "";
                     if (chat.getLastMessage() != null && chat.getLastMessage().getCreatedAt() != null) {
                         LocalDateTime time = chat.getLastMessage().getCreatedAt();
@@ -124,11 +123,11 @@ public class ChatController implements Initializable {
                     }
                     Label timeLabel = new Label(timeStr);
                     timeLabel.setFont(Font.font("System", 12));
-                    timeLabel.setTextFill(Color.web("#888888"));
+                    timeLabel.getStyleClass().add("chat-list-time");
                     
                     nameTimeBox.getChildren().addAll(nameLabel, timeLabel);
                     
-                    // Последнее сообщение
+                    // Последнее сообщение с CSS классом
                     String lastMessage = "No messages yet";
                     if (chat.getLastMessage() != null) {
                         String msgText = chat.getLastMessage().getMessageText();
@@ -138,17 +137,17 @@ public class ChatController implements Initializable {
                     
                     Label lastMsgLabel = new Label(lastMessage);
                     lastMsgLabel.setFont(Font.font("System", 13));
-                    lastMsgLabel.setTextFill(Color.web("#666666"));
+                    lastMsgLabel.getStyleClass().add("chat-list-preview");
                     
-                    // Непрочитанные
+                    // Непрочитанные с CSS классами
                     StackPane badgeContainer = new StackPane();
                     if (chat.getUnreadCount() > 0) {
                         Circle badge = new Circle(8);
-                        badge.setFill(Color.web("#ff3b30"));
+                        badge.getStyleClass().add("chat-unread-badge");
                         
                         Label countLabel = new Label(String.valueOf(chat.getUnreadCount()));
                         countLabel.setFont(Font.font("System", FontWeight.BOLD, 10));
-                        countLabel.setTextFill(Color.WHITE);
+                        countLabel.getStyleClass().add("chat-unread-count");
                         
                         badgeContainer.getChildren().addAll(badge, countLabel);
                         StackPane.setAlignment(badge, Pos.CENTER);
@@ -161,39 +160,31 @@ public class ChatController implements Initializable {
                     setGraphic(hbox);
                     setText(null);
                     
-                    // Стили для ячейки
+                    // Очищаем все стили
+                    getStyleClass().removeAll("chat-cell-selected", "chat-cell-unread");
+                    
+                    // Добавляем соответствующие CSS классы
                     if (isSelected()) {
-                        setStyle("-fx-background-color: #ffe6ea; -fx-border-width: 0;");
+                        getStyleClass().add("chat-cell-selected");
                     } else if (chat.getUnreadCount() > 0) {
-                        setStyle("-fx-background-color: #fff0f2; -fx-border-width: 0;");
-                    } else {
-                        setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
+                        getStyleClass().add("chat-cell-unread");
                     }
                     
-                    // Hover эффект
+                    // Hover эффект обрабатывается в CSS
                     setOnMouseEntered(e -> {
-                        if (!isSelected()) {
-                            setStyle("-fx-background-color: #ffe6ea; -fx-border-width: 0;");
+                        if (!isSelected() && !getStyleClass().contains("chat-cell-unread")) {
+                            getStyleClass().add("chat-cell-hover");
                         }
                     });
                     
                     setOnMouseExited(e -> {
-                        if (!isSelected()) {
-                            if (chat.getUnreadCount() > 0) {
-                                setStyle("-fx-background-color: #fff0f2; -fx-border-width: 0;");
-                            } else {
-                                setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
-                            }
-                        }
+                        getStyleClass().remove("chat-cell-hover");
                     });
                 }
             }
         });
         
-        // Настройка ширины списка чатов
-        chatsListView.setPrefWidth(300);
-        chatsListView.setMinWidth(250);
-        chatsListView.setMaxWidth(350);
+        chatsListView.getStyleClass().add("chat-list-view");
         
         // Setup messages list view
         messagesListView.setCellFactory(param -> new ListCell<Message>() {
@@ -221,6 +212,7 @@ public class ChatController implements Initializable {
                     textLabel.setMaxWidth(380);
                     textLabel.setPadding(new Insets(10, 15, 10, 15));
                     textLabel.setFont(Font.font("System", 14));
+                    textLabel.getStyleClass().add("message-text");
                     
                     // Message time
                     String timeStr = "";
@@ -230,28 +222,14 @@ public class ChatController implements Initializable {
                     Label timeLabel = new Label(timeStr);
                     timeLabel.setFont(Font.font("System", 11));
                     
+                    // Добавляем CSS классы в зависимости от отправителя
                     if (isMyMessage) {
-                        // My message (right) - фиолетовый
-                        textLabel.setStyle(
-                            "-fx-background-color: #8A2BE2; " +
-                            "-fx-background-radius: 18px 4px 18px 18px; " +
-                            "-fx-text-fill: white; " +
-                            "-fx-padding: 10 15;"
-                        );
-                        textLabel.setTextFill(Color.WHITE);
-                        timeLabel.setTextFill(Color.web("#999999"));
+                        textLabel.getStyleClass().add("message-bubble-mine");
+                        timeLabel.getStyleClass().add("message-time-mine");
                         timeLabel.setAlignment(Pos.CENTER_RIGHT);
                     } else {
-                        // Their message (left) - белый
-                        textLabel.setStyle(
-                            "-fx-background-color: white; " +
-                            "-fx-background-radius: 4px 18px 18px 18px; " +
-                            "-fx-text-fill: #333333; " +
-                            "-fx-padding: 10 15; " +
-                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);"
-                        );
-                        textLabel.setTextFill(Color.web("#333333"));
-                        timeLabel.setTextFill(Color.web("#999999"));
+                        textLabel.getStyleClass().add("message-bubble-theirs");
+                        timeLabel.getStyleClass().add("message-time-theirs");
                         timeLabel.setAlignment(Pos.CENTER_LEFT);
                     }
                     
@@ -260,13 +238,12 @@ public class ChatController implements Initializable {
                     
                     setGraphic(messageContainer);
                     setText(null);
-                    setStyle("-fx-background-color: transparent;");
+                    getStyleClass().add("message-cell");
                 }
             }
         });
         
-        // Настройка стиля списка сообщений
-        messagesListView.setStyle("-fx-background-color: #fff5f7; -fx-border-width: 0; -fx-padding: 10 0;");
+        messagesListView.getStyleClass().add("messages-list-view");
         
         // Chat selection listener
         chatsListView.getSelectionModel().selectedItemProperty().addListener(
@@ -294,37 +271,28 @@ public class ChatController implements Initializable {
             }
         });
         
-        // Message input стиль
-        messageInputArea.setStyle(
-            "-fx-background-color: white; " +
-            "-fx-border-color: #e0e0e0; " +
-            "-fx-border-radius: 20; " +
-            "-fx-background-radius: 20; " +
-            "-fx-padding: 12 20; " +
-            "-fx-font-size: 14px; " +
-            "-fx-wrap-text: true;"
-        );
+        // CSS классы для элементов ввода
+        messageInputArea.getStyleClass().add("message-input-area");
+        sendMessageButton.getStyleClass().add("chat-send-button");
+        chatPartnerNameLabel.getStyleClass().add("chat-header-name");
+        chatPartnerInfoLabel.getStyleClass().add("chat-header-info");
+        chatArea.getStyleClass().add("chat-area");
+        noChatSelectedPane.getStyleClass().add("no-chat-pane");
         
-        // Send button action and стиль
+        // Добавляем CSS классы для элементов внутри noChatSelectedPane
+        Platform.runLater(() -> {
+            Circle noChatIcon = (Circle) ((VBox) noChatSelectedPane.getChildren().get(0)).getChildren().get(0);
+            noChatIcon.getStyleClass().add("no-chat-icon");
+            
+            VBox noChatContent = (VBox) ((VBox) noChatSelectedPane.getChildren().get(0)).getChildren().get(1);
+            Label noChatTitle = (Label) noChatContent.getChildren().get(0);
+            Label noChatSubtitle = (Label) noChatContent.getChildren().get(1);
+            noChatTitle.getStyleClass().add("no-chat-title");
+            noChatSubtitle.getStyleClass().add("no-chat-subtitle");
+        });
+        
+        // Send button action
         sendMessageButton.setOnAction(event -> handleSendMessage());
-        sendMessageButton.setStyle(
-            "-fx-background-color: linear-gradient(to right, #ec4b6e, #ff6b9d); " +
-            "-fx-text-fill: white; " +
-            "-fx-font-weight: bold; " +
-            "-fx-font-size: 14px; " +
-            "-fx-padding: 12 30; " +
-            "-fx-border-radius: 20; " +
-            "-fx-background-radius: 20; " +
-            "-fx-cursor: hand; " +
-            "-fx-effect: dropshadow(gaussian, rgba(236,75,110,0.3), 8, 0, 0, 2);"
-        );
-        
-        // Заголовок чата стиль
-        chatPartnerNameLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-        chatPartnerNameLabel.setTextFill(Color.web("#333333"));
-        
-        chatPartnerInfoLabel.setFont(Font.font("System", 13));
-        chatPartnerInfoLabel.setTextFill(Color.web("#666666"));
         
         // Show "no chat selected" by default
         showNoChatSelected();
@@ -384,32 +352,12 @@ public class ChatController implements Initializable {
     
     @FXML
     public void onSendButtonHover() {
-        sendMessageButton.setStyle(
-            "-fx-background-color: linear-gradient(to right, #d43d5e, #ff5a8c); " +
-            "-fx-text-fill: white; " +
-            "-fx-font-weight: bold; " +
-            "-fx-font-size: 14px; " +
-            "-fx-padding: 12 30; " +
-            "-fx-border-radius: 20; " +
-            "-fx-background-radius: 20; " +
-            "-fx-cursor: hand; " +
-            "-fx-effect: dropshadow(gaussian, rgba(212,61,94,0.4), 10, 0, 0, 3);"
-        );
+        sendMessageButton.getStyleClass().add("send-button-hover");
     }
 
     @FXML  
     public void onSendButtonExit() {
-        sendMessageButton.setStyle(
-            "-fx-background-color: linear-gradient(to right, #ec4b6e, #ff6b9d); " +
-            "-fx-text-fill: white; " +
-            "-fx-font-weight: bold; " +
-            "-fx-font-size: 14px; " +
-            "-fx-padding: 12 30; " +
-            "-fx-border-radius: 20; " +
-            "-fx-background-radius: 20; " +
-            "-fx-cursor: hand; " +
-            "-fx-effect: dropshadow(gaussian, rgba(236,75,110,0.3), 8, 0, 0, 2);"
-        );
+        sendMessageButton.getStyleClass().remove("send-button-hover");
     }
 
     @FXML
