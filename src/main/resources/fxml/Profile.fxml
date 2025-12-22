@@ -36,7 +36,9 @@
                     <VBox alignment="CENTER" spacing="15.0">
                         <StackPane>
                             <Circle fill="#ec4b6e" radius="70" />
-                            <ImageView fx:id="avatarImageView" fitHeight="120" fitWidth="120" preserveRatio="true" styleClass="avatar-image" />
+                            <ImageView fitHeight="120" fitWidth="120" preserveRatio="true" styleClass="avatar-image">
+                                <Image url="@../images/default_avatar.png" />
+                            </ImageView>
                         </StackPane>
                         <Button fx:id="changeAvatarBtn" mnemonicParsing="false" styleClass="secondary-btn" text="Change Photo">
                             <graphic>
@@ -49,25 +51,15 @@
 
                     <!-- Basic Info -->
                     <VBox spacing="10.0" styleClass="basic-info-section">
-                        <Label styleClass="profile-title" text="My Profile" />
-                        <HBox alignment="CENTER_LEFT" spacing="15.0">
-                            <Label fx:id="profileName" styleClass="profile-name" />
-                            <Label fx:id="profileAge" styleClass="profile-age" />
-                            <Label fx:id="verifiedBadge" styleClass="verified-badge" text="✓ Verified" />
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                            <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
-                                <Image url="@../icons/location_icon.png" />
-                            </ImageView>
-                            <Label fx:id="profileLocation" styleClass="profile-location" />
-                        </HBox>
-                        <Label fx:id="profileStatus" styleClass="profile-status" text="Online" />
+                        <Label styleClass="profile-title" text="Create Your Profile" />
+                        <Label styleClass="info-text" text="Fill in your details to get the best experience" />
+                        <Label fx:id="verifiedBadge" styleClass="verified-badge" text="Complete your profile to get verified" visible="false" />
                     </VBox>
                 </HBox>
 
                 <!-- Edit Profile Section -->
                 <VBox spacing="25.0" styleClass="edit-section">
-                    <Label styleClass="section-title" text="Edit Profile" />
+                    <Label styleClass="section-title" text="Profile Information" />
 
                     <!-- Personal Information -->
                     <VBox spacing="15.0" styleClass="form-section">
@@ -92,13 +84,14 @@
 
                             <!-- Gender -->
                             <Label styleClass="form-label" text="Gender:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                            <ComboBox fx:id="genderComboBox" promptText="Select gender" styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                     <rowConstraints>
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                     </rowConstraints>
+                            <ComboBox fx:id="genderComboBox" styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                            <rowConstraints>
+                                <RowConstraints />
+                                <RowConstraints />
+                                <RowConstraints />
+                                <RowConstraints />
+                            </rowConstraints>
                         </GridPane>
                     </VBox>
 
@@ -120,27 +113,28 @@
 
                             <!-- Looking For -->
                             <Label styleClass="form-label" text="Looking For:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                            <ComboBox fx:id="relationshipGoalComboBox" promptText="Select what you're looking for" styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                            <ComboBox fx:id="relationshipGoalComboBox" styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                             <!-- Interests -->
                             <Label styleClass="form-label" text="Interests:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                             <TextField fx:id="interestsField" promptText="e.g., Music, Travel, Sports, Art" styleClass="form-input" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                     <rowConstraints>
-                        <RowConstraints />
-                        <RowConstraints />
-                     </rowConstraints>
+
+                            <rowConstraints>
+                                <RowConstraints />
+                                <RowConstraints />
+                            </rowConstraints>
                         </GridPane>
                     </VBox>
 
                     <!-- Action Buttons -->
                     <HBox alignment="CENTER_RIGHT" spacing="15.0">
                         <Button fx:id="cancelBtn" mnemonicParsing="false" styleClass="cancel-btn" text="Cancel" />
-                        <Button fx:id="saveBtn" mnemonicParsing="false" styleClass="save-btn" text="Save Changes" />
+                        <Button fx:id="saveBtn" mnemonicParsing="false" styleClass="save-btn" text="Save Profile" />
                     </HBox>
                 </VBox>
 
-                <!-- Profile Stats -->
-                <VBox spacing="20.0" styleClass="stats-section">
+                <!-- Profile Stats (скрыто до создания профиля) -->
+                <VBox spacing="20.0" styleClass="stats-section" visible="false">
                     <Label styleClass="section-title" text="Profile Stats" />
                     <HBox alignment="CENTER" spacing="30.0">
                         <VBox alignment="CENTER" spacing="5.0" styleClass="stat-box">
