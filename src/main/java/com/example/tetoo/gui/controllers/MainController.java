@@ -106,13 +106,13 @@ public class MainController implements Initializable {
     private void setOverlayContentForSignIn() {
         lblOverlayTitle.setText("Hello, friend!");
         lblOverlaySub.setText("");
-        btnOverlay.setText("REGISTER");
+        btnOverlay.setText("GO TO LOGIN");
     }
 
     private void setOverlayContentForSignUp() {
         lblOverlayTitle.setText("Welcome back!");
         lblOverlaySub.setText("");
-        btnOverlay.setText("LOGIN");
+        btnOverlay.setText("GO TO REGISTER");
     }
 
     @FXML

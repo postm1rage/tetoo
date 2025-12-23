@@ -1,4 +1,4 @@
-package com.example.tetoo.models;
+package com.example.tetoo.model;
 
 import java.util.List;
 

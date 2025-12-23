@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.*?>
 
 <BorderPane fx:id="mainPane" prefHeight="600.0" prefWidth="900.0"
-            stylesheets="@../styles/dashboard.css, @../styles/chats.css"
+            stylesheets="@../styles/dashboard.css, @../styles/chats.css, @../styles/likes.css"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.tetoo.gui.controllers.DashboardController">
@@ -120,31 +120,17 @@
             </VBox>
 
             <!-- Likes content (hidden by default) -->
-            <VBox fx:id="likesContent" spacing="15.0" visible="false" style="-fx-padding: 20;">
-                <Label text="Likes" styleClass="section-title" />
-                <HBox spacing="20.0">
-                    <VBox spacing="10.0" styleClass="likes-section">
-                        <Label text="Received Likes" styleClass="subsection-title" />
-                        <Label fx:id="receivedLikesCount" text="0" styleClass="likes-count" />
-                        <Button mnemonicParsing="false" onAction="#handleViewReceivedLikes"
-                                styleClass="secondary-btn" text="View All" />
-                    </VBox>
-                    <VBox spacing="10.0" styleClass="likes-section">
-                        <Label text="Sent Likes" styleClass="subsection-title" />
-                        <Label fx:id="sentLikesCount" text="0" styleClass="likes-count" />
-                        <Button mnemonicParsing="false" onAction="#handleViewSentLikes"
-                                styleClass="secondary-btn" text="View All" />
-                    </VBox>
-                </HBox>
+            <VBox fx:id="likesContent" spacing="0" visible="false" StackPane.alignment="CENTER">
+                <!-- Include likes panel -->
+                <fx:include source="likes_panel.fxml" fx:id="likesPanel" />
             </VBox>
-
             <!-- Matches content (hidden by default) -->
             <VBox fx:id="matchesContent" spacing="15.0" visible="false" style="-fx-padding: 20;">
                 <Label text="Matches" styleClass="section-title" />
                 <Label text="People you've matched with" styleClass="info-text" />
                 <Button mnemonicParsing="false" onAction="#handleViewMatches"
                         styleClass="action-btn" text="View All Matches" />
-            </VBox>
+            </VBox> 
 
         </StackPane>
     </center>

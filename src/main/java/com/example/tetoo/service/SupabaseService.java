@@ -541,7 +541,7 @@ public class SupabaseService {
     }
     
     // Получить профиль пользователя по ID (с кэшированием)
-    private UserProfile getUserProfile(Integer userId) {
+    UserProfile getUserProfile(Integer userId) {
         // Проверяем кэш
         if (userProfileCache.containsKey(userId)) {
             LocalDateTime expiry = cacheExpiry.get(userId);

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="mainContainer" alignment="TOP_CENTER" spacing="10"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.tetoo.gui.controllers.LikesController"
+      styleClass="likes-panel">
+
+    <!-- Заголовок -->
+    <Label text="Discover People" styleClass="likes-title" />
+
+    <!-- Основной контент в HBox -->
+    <HBox alignment="CENTER" spacing="15" styleClass="content-container">
+        <!-- Левая часть: Карточка пользователя -->
+        <VBox alignment="TOP_CENTER" spacing="8" styleClass="left-section">
+            <!-- Карточка пользователя -->
+            <StackPane fx:id="userCardContainer" styleClass="user-card-container">
+                <!-- Фон карточки -->
+                <Rectangle arcHeight="15.0" arcWidth="15.0" height="360.0" 
+                           styleClass="user-card-background" width="260.0" />
+                
+                <!-- Рамка карточки (розовая) -->
+                <Rectangle arcHeight="15.0" arcWidth="15.0" height="360.0" 
+                           styleClass="user-card-border" width="260.0" />
+                
+                <!-- Содержимое карточки -->
+                <VBox alignment="TOP_CENTER" spacing="8" styleClass="user-card-content">
+                    <!-- Аватар пользователя -->
+                    <StackPane styleClass="avatar-container">
+                        <Circle radius="38.0" styleClass="avatar-circle" />
+                        <!-- Рамка аватара (розовая) -->
+                        <Circle radius="41.0" styleClass="avatar-border" />
+                        <ImageView fx:id="userAvatar" fitHeight="70.0" fitWidth="70.0" 
+                                   preserveRatio="true" styleClass="avatar-image" />
+                    </StackPane>
+
+                    <!-- Информация о пользователе -->
+                    <VBox alignment="CENTER" spacing="4" styleClass="info-container">
+                        <Label fx:id="userName" styleClass="user-name" />
+                        <HBox alignment="CENTER" spacing="8">
+                            <Label fx:id="userAge" styleClass="user-age" />
+                            <Label fx:id="userLocation" styleClass="user-location" />
+                        </HBox>
+                        <Label fx:id="userGender" styleClass="user-gender" />
+                        <Label fx:id="userGoal" styleClass="user-goal" />
+                    </VBox>
+
+                    <!-- Разделитель -->
+                    <Separator prefWidth="230.0" styleClass="card-separator" />
+
+                    <!-- О себе - уменьшенный блок -->
+                    <VBox alignment="CENTER_LEFT" spacing="2" styleClass="about-container">
+                        <Label text="About me:" styleClass="about-title" />
+                        <TextArea fx:id="userAbout" editable="false" focusTraversable="false"
+                                  prefHeight="40.0" prefWidth="230.0" styleClass="about-text" 
+                                  wrapText="true" />
+                    </VBox>
+
+                    <!-- Интересы - увеличенный блок БЕЗ СКРОЛЛА -->
+                    <VBox alignment="CENTER_LEFT" spacing="3" styleClass="interests-container">
+                        <Label text="Interests:" styleClass="interests-title" />
+                        <FlowPane fx:id="interestsPane" hgap="5.0" vgap="5.0" 
+                                  prefWidth="230.0" prefHeight="70.0" />
+                    </VBox>
+                </VBox>
+            </StackPane>
+        </VBox>
+
+        <!-- Правая часть: Кнопки и статистика -->
+        <VBox alignment="CENTER" spacing="15" styleClass="right-section">
+            <!-- Кнопка лайка (зеленая) - СВЕРХУ -->
+            <Button fx:id="likeBtn" mnemonicParsing="false" onAction="#handleLike"
+                    styleClass="like-btn">
+                <graphic>
+                    <StackPane>
+                        <Circle radius="25.0" styleClass="like-circle" />
+                        <Label text="♥" styleClass="like-icon" />
+                    </StackPane>
+                </graphic>
+            </Button>
+
+            <!-- Статистика -->
+            <VBox alignment="CENTER" spacing="10" styleClass="stats-container">
+                <VBox alignment="CENTER" spacing="2">
+                    <Label text="Sent Today" styleClass="stats-title" />
+                    <Label fx:id="sentTodayCount" text="0" styleClass="stats-value" />
+                </VBox>
+                <VBox alignment="CENTER" spacing="2">
+                    <Label text="Total Likes" styleClass="stats-title" />
+                    <Label fx:id="totalLikesCount" text="0" styleClass="stats-value" />
+                </VBox>
+                <VBox alignment="CENTER" spacing="2">
+                    <Label text="Matches" styleClass="stats-title" />
+                    <Label fx:id="matchesCount" text="0" styleClass="stats-value" />
+                </VBox>
+            </VBox>
+
+            <!-- Кнопка дизлайка (красная) - СНИЗУ -->
+            <Button fx:id="dislikeBtn" mnemonicParsing="false" onAction="#handleDislike"
+                    styleClass="dislike-btn">
+                <graphic>
+                    <StackPane>
+                        <Circle radius="25.0" styleClass="dislike-circle" />
+                        <Label text="✕" styleClass="dislike-icon" />
+                    </StackPane>
+                </graphic>
+            </Button>
+        </VBox>
+    </HBox>
+
+    <!-- Статус (если нет пользователей) -->
+    <VBox fx:id="noUsersContainer" alignment="CENTER" spacing="5" visible="false"
+          styleClass="no-users-container">
+        <Label fx:id="noUsersLabel" text="No users to show" styleClass="no-users-label" />
+        <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#handleRefresh"
+                styleClass="refresh-btn" text="Refresh" />
+    </VBox>
+
+    <!-- Прогресс бар (для анимации) -->
+    <ProgressBar fx:id="loadingProgress" prefWidth="260.0" visible="false" />
+
+</VBox>

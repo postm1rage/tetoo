@@ -26,6 +26,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import com.example.tetoo.gui.controllers.LikesController;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -73,6 +74,13 @@ public class DashboardController implements Initializable {
     // Chat controller reference (injected via fx:include)
     @FXML private ChatController chatPanelController;
     
+    @FXML
+    private LikesController likesPanelController;
+
+    // Likes panel reference
+    @FXML
+    private VBox likesPanel;
+
     // Методы для перемещения окна (из версии HEAD)
     @FXML
     private void handleMousePressed(MouseEvent event) {
@@ -104,6 +112,15 @@ public class DashboardController implements Initializable {
         
         // Show profile by default
         showProfile();
+
+        // Инициализация контроллера лайков (если он существует)
+        if (likesPanel != null) {
+            // Контроллер автоматически инжектируется через fx:include
+            // Нужно просто проверить, что он существует
+            System.out.println("Likes panel found");
+        } else {
+            System.out.println("Likes panel not found - check fx:include in dashboard.fxml");
+        }
     }
     
     private void loadUserData() {
@@ -337,7 +354,15 @@ public class DashboardController implements Initializable {
         hideAllContent();
         likesContent.setVisible(true);
         statusLabel.setText("Viewing likes");
-        updateLikesCount();
+        
+        // Обновляем данные в контроллере лайков
+        if (likesPanelController != null) {
+            System.out.println("Refreshing likes panel");
+            likesPanelController.refresh();
+        } else {
+            System.out.println("Likes panel controller is null");
+        }
+        
     }
     
     @FXML
