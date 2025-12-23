@@ -1,25 +1,31 @@
 package com.example.tetoo.gui.controllers;
 
 import com.example.tetoo.auth.SessionManager;
-import com.example.tetoo.gui.controllers.ChatController;
+import com.example.tetoo.config.SupabaseConfig;
 import com.example.tetoo.model.User;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.Node;
-
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -29,6 +35,9 @@ public class DashboardController implements Initializable {
 
     private double xOffset = 0;
     private double yOffset = 0;
+    private Gson gson = new Gson();
+    private CloseableHttpClient httpClient = HttpClients.createDefault();
+    
     // Header and navigation
     @FXML private Label welcomeLabel;
     @FXML private Label userNameLabel;
@@ -50,7 +59,6 @@ public class DashboardController implements Initializable {
     @FXML private Button chatsBtn;
     @FXML private Button likesBtn;
     @FXML private Button matchesBtn;
-    // @FXML private Button notificationsBtn; // Раскомментировать если добавишь в FXML
     
     // Avatars
     @FXML private ImageView userAvatar;
@@ -61,13 +69,18 @@ public class DashboardController implements Initializable {
     @FXML private VBox chatsContent;
     @FXML private VBox likesContent;
     @FXML private VBox matchesContent;
-
+    
+    // Chat controller reference (injected via fx:include)
+    @FXML private ChatController chatPanelController;
+    
+    // Методы для перемещения окна (из версии HEAD)
     @FXML
     private void handleMousePressed(MouseEvent event) {
         // Запоминаем позицию мыши относительно окна
         xOffset = event.getSceneX();
         yOffset = event.getSceneY();
     }
+    
     @FXML
     private void handleMouseDragged(MouseEvent event) {
         // Получаем Stage (окно)
@@ -78,8 +91,6 @@ public class DashboardController implements Initializable {
         stage.setX(event.getScreenX() - xOffset);
         stage.setY(event.getScreenY() - yOffset);
     }
-    // Chat controller reference (injected via fx:include)
-    @FXML private ChatController chatPanelController;
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -100,18 +111,28 @@ public class DashboardController implements Initializable {
         
         if (currentUser != null) {
             String email = currentUser.getEmail();
-            String name = email.substring(0, email.indexOf('@')); // Extract name from email
-            
-            welcomeLabel.setText("Welcome, " + name + "!");
-            userNameLabel.setText(name);
+
+            // Пытаемся загрузить имя из профиля (из версии section-design)
+            String firstName = getUserFirstName(currentUser.getId());
+
+            if (firstName != null && !firstName.isEmpty()) {
+                welcomeLabel.setText("Welcome, " + firstName + "!");
+                userNameLabel.setText(firstName);
+                profileName.setText(firstName);
+            } else {
+                // Используем email как временное имя (из версии HEAD)
+                String nameFromEmail = email.substring(0, email.indexOf('@'));
+                welcomeLabel.setText("Welcome, " + nameFromEmail + "!");
+                userNameLabel.setText(nameFromEmail);
+                profileName.setText(nameFromEmail);
+            }
+
             userEmailLabel.setText(email);
-            
-            // Profile info
-            profileName.setText(name);
-            profileAgeLocation.setText("Age: Unknown • Location: Unknown");
-            profileRelationshipGoal.setText("Looking for: Unknown");
-            
-            // Load avatar if available
+
+            // Загружаем дополнительную информацию профиля (из section-design)
+            loadProfileInfo(currentUser.getId());
+
+            // Load avatar (объединенная версия)
             try {
                 InputStream avatarStream = getClass().getResourceAsStream("/images/default_avatar.png");
                 if (avatarStream != null) {
@@ -136,6 +157,104 @@ public class DashboardController implements Initializable {
         }
     }
     
+    // Метод из версии section-design для получения имени пользователя
+    private String getUserFirstName(int userId) {
+        try {
+            String url = SupabaseConfig.FULL_API_URL + "user_profiles?user_id=eq." + userId;
+            HttpGet request = new HttpGet(url);
+
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+
+            HttpResponse response = httpClient.execute(request);
+            String responseBody = EntityUtils.toString(response.getEntity());
+
+            if (responseBody.length() > 2 && !responseBody.equals("[]")) {
+                JsonArray profiles = gson.fromJson(responseBody, JsonArray.class);
+                if (profiles.size() > 0) {
+                    JsonObject profile = profiles.get(0).getAsJsonObject();
+                    if (profile.has("first_name")) {
+                        return profile.get("first_name").getAsString();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading user profile: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // Метод из версии section-design для загрузки информации профиля
+    private void loadProfileInfo(int userId) {
+        try {
+            String url = SupabaseConfig.FULL_API_URL + "user_profiles?user_id=eq." + userId;
+            HttpGet request = new HttpGet(url);
+
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+
+            HttpResponse response = httpClient.execute(request);
+            String responseBody = EntityUtils.toString(response.getEntity());
+
+            if (responseBody.length() > 2 && !responseBody.equals("[]")) {
+                JsonArray profiles = gson.fromJson(responseBody, JsonArray.class);
+                if (profiles.size() > 0) {
+                    JsonObject profile = profiles.get(0).getAsJsonObject();
+
+                    StringBuilder ageLocation = new StringBuilder();
+
+                    if (profile.has("birth_date")) {
+                        try {
+                            String birthDate = profile.get("birth_date").getAsString();
+                            int birthYear = Integer.parseInt(birthDate.substring(0, 4));
+                            int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+                            int age = currentYear - birthYear;
+                            ageLocation.append("Age: ").append(age);
+                        } catch (Exception e) {
+                            ageLocation.append("Birth: ").append(profile.get("birth_date").getAsString());
+                        }
+                    } else {
+                        ageLocation.append("Age: Unknown");
+                    }
+
+                    if (profile.has("city")) {
+                        ageLocation.append(" • Location: ").append(profile.get("city").getAsString());
+                    } else {
+                        ageLocation.append(" • Location: Unknown");
+                    }
+
+                    profileAgeLocation.setText(ageLocation.toString());
+
+                    if (profile.has("relationship_goal")) {
+                        String goal = profile.get("relationship_goal").getAsString();
+                        String goalText = "";
+                        switch (goal) {
+                            case "serious": goalText = "Serious relationship"; break;
+                            case "casual": goalText = "Casual dating"; break;
+                            case "friendship": goalText = "Friendship"; break;
+                            case "networking": goalText = "Networking"; break;
+                            default: goalText = goal;
+                        }
+                        profileRelationshipGoal.setText("Looking for: " + goalText);
+                    } else {
+                        profileRelationshipGoal.setText("Looking for: Unknown");
+                    }
+
+                }
+            } else {
+                // No profile found
+                profileAgeLocation.setText("Age: Unknown • Location: Unknown");
+                profileRelationshipGoal.setText("Looking for: Unknown");
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error loading profile info: " + e.getMessage());
+            profileAgeLocation.setText("Age: Unknown • Location: Unknown");
+            profileRelationshipGoal.setText("Looking for: Unknown");
+        }
+    }
+    
+    // Метод из версии HEAD для создания дефолтного аватара
     private Image createDefaultAvatar() {
         // Create a simple colored circle as placeholder
         WritableImage image = new WritableImage(100, 100);
@@ -173,11 +292,6 @@ public class DashboardController implements Initializable {
         chatsBtn.getStyleClass().remove(activeStyle);
         likesBtn.getStyleClass().remove(activeStyle);
         matchesBtn.getStyleClass().remove(activeStyle);
-        
-        // Only remove if button exists in FXML
-        // if (notificationsBtn != null) {
-        //     notificationsBtn.getStyleClass().remove(activeStyle);
-        // }
     }
     
     private void hideAllContent() {
@@ -185,11 +299,6 @@ public class DashboardController implements Initializable {
         chatsContent.setVisible(false);
         likesContent.setVisible(false);
         matchesContent.setVisible(false);
-        
-        // Only hide if exists in FXML
-        // if (notificationsContent != null) {
-        //     notificationsContent.setVisible(false);
-        // }
     }
     
     @FXML
@@ -213,7 +322,7 @@ public class DashboardController implements Initializable {
         chatsContent.setVisible(true);
         statusLabel.setText("Viewing chats");
         
-        // Load chats through ChatController if available
+        // Load chats through ChatController if available (из версии HEAD)
         if (chatPanelController != null) {
             chatPanelController.loadUserChats();
         }
@@ -242,25 +351,11 @@ public class DashboardController implements Initializable {
         statusLabel.setText("Viewing matches");
     }
     
-    // Uncomment if you add notifications button in FXML
-    /*
-    @FXML
-    private void showNotifications() {
-        System.out.println("Showing notifications");
-        resetNavButtons();
-        notificationsBtn.getStyleClass().add("nav-btn-active");
-        
-        hideAllContent();
-        notificationsContent.setVisible(true);
-        statusLabel.setText("Viewing notifications");
-    }
-    */
-    
     @FXML
     private void handleLogout() {
         System.out.println("Logging out...");
         
-        // Shutdown chat controller if exists
+        // Shutdown chat controller if exists (из версии HEAD)
         if (chatPanelController != null) {
             chatPanelController.shutdown();
         }
@@ -269,50 +364,139 @@ public class DashboardController implements Initializable {
         returnToLogin();
     }
     
+    // Объединенный метод handleEditProfile
     @FXML
     private void handleEditProfile() {
-        System.out.println("Edit profile clicked");
+        System.out.println("=== Opening Profile ===");
         statusLabel.setText("Opening profile editor...");
-        // TODO: Implement profile editing
+
+        try {
+            // Загружаем Profile.fxml (из section-design)
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Profile.fxml"));
+            Parent profileRoot = loader.load();
+
+            // Получаем текущее окно
+            Stage currentStage = (Stage) logoutBtn.getScene().getWindow();
+
+            // Создаем новую сцену
+            Scene profileScene = new Scene(profileRoot, 1000, 700);
+            currentStage.setScene(profileScene);
+            currentStage.setTitle("TETOO - Profile");
+            currentStage.centerOnScreen();
+
+            System.out.println("Successfully switched to profile");
+
+        } catch (Exception e) {
+            System.err.println("Error opening profile: " + e.getMessage());
+            e.printStackTrace();
+
+            // Покажем детальную ошибку (из section-design)
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Opening Profile");
+            alert.setHeaderText("Cannot open profile editor");
+
+            // Создаем TextArea для деталей ошибки
+            TextArea textArea = new TextArea(e.toString() + "\n\n" + getStackTrace(e));
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(textArea, 0, 0);
+
+            alert.getDialogPane().setExpandableContent(expContent);
+            alert.showAndWait();
+        }
+    }
+    
+    // Методы из версии section-design
+    @FXML
+    private void handleLoadChats() {
+        System.out.println("Load chats clicked");
+        statusLabel.setText("Loading chats...");
+        showAlert("Chats feature coming soon!");
     }
     
     @FXML
     private void handleStartDiscovery() {
         System.out.println("Start discovery clicked");
         statusLabel.setText("Starting discovery...");
-        // TODO: Implement discovery feature
+        showAlert("Discovery feature coming soon!");
     }
     
     @FXML
     private void handleViewReceivedLikes() {
         System.out.println("View received likes clicked");
         statusLabel.setText("Loading received likes...");
-        // TODO: Implement received likes
+        showAlert("Likes feature coming soon!");
     }
     
     @FXML
     private void handleViewSentLikes() {
         System.out.println("View sent likes clicked");
         statusLabel.setText("Loading sent likes...");
-        // TODO: Implement sent likes
+        showAlert("Likes feature coming soon!");
     }
     
     @FXML
     private void handleViewMatches() {
         System.out.println("View matches clicked");
         statusLabel.setText("Loading matches...");
-        // TODO: Implement matches view
+        showAlert("Matches feature coming soon!");
     }
     
-    // Uncomment if you add notifications in FXML
-    /*
+    // Метод из section-design для тестирования профиля
     @FXML
-    private void handleMarkAllAsRead() {
-        System.out.println("Mark all as read clicked");
-        statusLabel.setText("Marking all as read...");
-        // TODO: Implement notifications
+    private void debugTestProfile() {
+        System.out.println("=== DEBUG Testing Profile ===");
+
+        // Проверяем наличие файла
+        java.net.URL url = getClass().getResource("/fxml/Profile.fxml");
+        if (url == null) {
+            System.err.println("ERROR: Profile.fxml not found at /fxml/Profile.fxml");
+
+            // Покажем все что есть в fxml папке
+            try {
+                System.err.println("Searching for resources in /fxml/");
+                java.util.Enumeration<java.net.URL> resources =
+                        getClass().getClassLoader().getResources("fxml");
+                while (resources.hasMoreElements()) {
+                    System.err.println("  Found: " + resources.nextElement());
+                }
+            } catch (Exception e) {
+                System.err.println("Error searching resources: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Profile.fxml found at: " + url);
+            System.out.println("File exists: " + new java.io.File(url.getFile()).exists());
+        }
+
+        // Пробуем загрузить
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Profile.fxml"));
+            System.out.println("Loader created successfully");
+
+            // Попробуем загрузить
+            Parent testRoot = loader.load();
+            System.out.println("SUCCESS: Profile.fxml loaded!");
+
+            // Покажем маленькое тестовое окно
+            Stage testStage = new Stage();
+            Scene testScene = new Scene(testRoot, 400, 300);
+            testStage.setScene(testScene);
+            testStage.setTitle("Profile Test - SUCCESS");
+            testStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Loader creation/loading error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
-    */
     
     private void updateLikesCount() {
         // Temporary stub - will implement with real data later
@@ -343,7 +527,23 @@ public class DashboardController implements Initializable {
         }
     }
     
-    // Method called when application is closing
+    // Вспомогательные методы из section-design
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private String getStackTrace(Exception e) {
+        java.io.StringWriter sw = new java.io.StringWriter();
+        java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
+    }
+    
+    // Метод из версии HEAD для завершения работы
     public void shutdown() {
         System.out.println("DashboardController shutdown initiated");
         
