@@ -30,14 +30,22 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.http.client.methods.HttpPatch;
-
 
 public class SupabaseService {
     private static final DateTimeFormatter DATE_FORMATTER = 
         DateTimeFormatter.ISO_DATE_TIME;
     private static final Gson gson = new Gson();
     private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    
+    // Кэширование профилей пользователей
+    private Map<Integer, UserProfile> userProfileCache = new ConcurrentHashMap<>();
+    private Map<Integer, LocalDateTime> cacheExpiry = new ConcurrentHashMap<>();
+    private static final int CACHE_TTL_MINUTES = 5;
     
     // Method for testing connection and getting all users
     public List<User> getAllUsers() {
@@ -355,7 +363,7 @@ public class SupabaseService {
                 
                 // Для каждого собеседника создаём Chat объект
                 for (Integer otherUserId : chatUserIds) {
-                    // Получаем профиль собеседника
+                    // Получаем профиль собеседника С КЭШИРОВАНИЕМ
                     UserProfile otherUser = getUserProfile(otherUserId);
                     
                     if (otherUser != null) {
@@ -397,8 +405,167 @@ public class SupabaseService {
         
         return chats;
     }
-    // Получить профиль пользователя по ID
+    
+    // НОВЫЙ МЕТОД: Легкое обновление списка чатов (для polling)
+    public List<Chat> getChatsLight(Integer userId) {
+        List<Chat> chats = new ArrayList<>();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        
+        try {
+            // Оптимизированный запрос: получаем только последние 50 сообщений
+            String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.MESSAGES_TABLE + 
+                        "?or=(sender_id.eq." + userId + ",receiver_id.eq." + userId + ")" +
+                        "&select=sender_id,receiver_id,created_at" +
+                        "&order=created_at.desc" +
+                        "&limit=50"; // Ограничиваем количество
+            
+            HttpGet request = new HttpGet(url);
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+            request.setHeader("Content-Type", "application/json");
+            
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            
+            if (statusCode == 200) {
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+                
+                JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
+                
+                // Собираем уникальных собеседников (только из последних 50 сообщений)
+                Set<Integer> recentChatUserIds = new LinkedHashSet<>(); // Сохраняем порядок
+                
+                for (JsonElement element : jsonArray) {
+                    JsonObject msgObj = element.getAsJsonObject();
+                    Integer senderId = msgObj.get("sender_id").getAsInt();
+                    Integer receiverId = msgObj.get("receiver_id").getAsInt();
+                    
+                    Integer otherUserId = senderId.equals(userId) ? receiverId : senderId;
+                    recentChatUserIds.add(otherUserId);
+                    
+                    // Ограничиваем 20 последними чатами
+                    if (recentChatUserIds.size() >= 20) {
+                        break;
+                    }
+                }
+                
+                // Для каждого собеседника создаём Chat объект
+                for (Integer otherUserId : recentChatUserIds) {
+                    // Получаем только БАЗОВУЮ информацию о профиле
+                    UserProfile basicProfile = getBasicUserProfile(otherUserId);
+                    
+                    if (basicProfile != null) {
+                        Chat chat = new Chat(userId, otherUserId, basicProfile);
+                        
+                        // Получаем последнее сообщение
+                        Message lastMessage = getLastMessage(userId, otherUserId);
+                        chat.setLastMessage(lastMessage);
+                        
+                        // Получаем количество непрочитанных (отдельный легкий запрос)
+                        Integer unreadCount = getUnreadCountLight(userId, otherUserId);
+                        chat.setUnreadCount(unreadCount);
+                        
+                        chats.add(chat);
+                    }
+                }
+                
+                System.out.println("Light chat list loaded: " + chats.size() + " chats");
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error getting light chats: " + e.getMessage());
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return chats;
+    }
+    
+    // НОВЫЙ МЕТОД: Получить новые сообщения начиная с указанного времени
+    public List<Message> getNewMessagesSince(Integer user1Id, Integer user2Id, LocalDateTime since) {
+        List<Message> messages = new ArrayList<>();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        
+        try {
+            // Форматируем время для Supabase
+            String sinceStr = since.format(DateTimeFormatter.ISO_DATE_TIME);
+            
+            String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.MESSAGES_TABLE + 
+                        "?or=(and(sender_id.eq." + user1Id + ",receiver_id.eq." + user2Id + ")," +
+                        "and(sender_id.eq." + user2Id + ",receiver_id.eq." + user1Id + "))" +
+                        "&created_at=gt." + sinceStr + 
+                        "&order=created_at.asc"; // Только сообщения ПОСЛЕ указанного времени
+            
+            HttpGet request = new HttpGet(url);
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+            request.setHeader("Content-Type", "application/json");
+            
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            
+            if (statusCode == 200) {
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+                
+                JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
+                
+                for (JsonElement element : jsonArray) {
+                    Message message = parseMessage(element.getAsJsonObject());
+                    if (message != null) {
+                        messages.add(message);
+                    }
+                }
+                
+                if (!messages.isEmpty()) {
+                    System.out.println("Found " + messages.size() + " new messages since " + sinceStr);
+                }
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error getting new messages: " + e.getMessage());
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return messages;
+    }
+    
+    // Получить профиль пользователя по ID (с кэшированием)
     private UserProfile getUserProfile(Integer userId) {
+        // Проверяем кэш
+        if (userProfileCache.containsKey(userId)) {
+            LocalDateTime expiry = cacheExpiry.get(userId);
+            if (expiry != null && expiry.isAfter(LocalDateTime.now())) {
+                System.out.println("Using cached profile for user " + userId);
+                return userProfileCache.get(userId);
+            }
+        }
+        
+        // Если нет в кэше или просрочен
+        UserProfile profile = getUserProfileFromDB(userId);
+        
+        if (profile != null) {
+            // Сохраняем в кэш
+            userProfileCache.put(userId, profile);
+            cacheExpiry.put(userId, LocalDateTime.now().plusMinutes(CACHE_TTL_MINUTES));
+            System.out.println("Cached profile for user " + userId + " (TTL: " + CACHE_TTL_MINUTES + "min)");
+        }
+        
+        return profile;
+    }
+    
+    // Получить профиль из БД
+    private UserProfile getUserProfileFromDB(Integer userId) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         
         try {
@@ -463,6 +630,61 @@ public class SupabaseService {
         
         return null;
     }
+    
+    // Получить только базовую информацию профиля (имя, фамилия)
+    private UserProfile getBasicUserProfile(Integer userId) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        
+        try {
+            // Только имя и фамилия - минимальная информация
+            String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.USER_PROFILES_TABLE + 
+                        "?user_id=eq." + userId + "&select=first_name,last_name,user_id";
+            
+            HttpGet request = new HttpGet(url);
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+            request.setHeader("Content-Type", "application/json");
+            
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            
+            if (statusCode == 200) {
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+                
+                JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
+                
+                if (jsonArray.size() > 0) {
+                    JsonObject profileObj = jsonArray.get(0).getAsJsonObject();
+                    
+                    String firstName = getJsonString(profileObj, "first_name");
+                    String lastName = getJsonString(profileObj, "last_name");
+                    
+                    // Создаем минимальный профиль
+                    UserProfile profile = new UserProfile(userId, null, firstName, lastName, null, 
+                                                         null, null, null, null, null, null);
+                    
+                    // Кэшируем и базовый профиль
+                    userProfileCache.put(userId, profile);
+                    cacheExpiry.put(userId, LocalDateTime.now().plusMinutes(CACHE_TTL_MINUTES));
+                    
+                    return profile;
+                }
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error getting basic profile: " + e.getMessage());
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return null;
+    }
+    
     // Получить детальную информацию профиля из user_profiles
     private UserProfile getUserProfileDetails(Integer userId) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -529,6 +751,7 @@ public class SupabaseService {
         
         return null;
     }
+    
     // Получить URL аватара пользователя
     private String getUserAvatar(Integer userId) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -569,6 +792,7 @@ public class SupabaseService {
         
         return null;
     }
+    
     // Получить последнее сообщение между двумя пользователями
     private Message getLastMessage(Integer user1Id, Integer user2Id) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -610,6 +834,7 @@ public class SupabaseService {
         
         return null;
     }
+    
     // Получить количество непрочитанных сообщений от пользователя
     private Integer getUnreadCount(Integer userId, Integer otherUserId) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -649,6 +874,57 @@ public class SupabaseService {
         
         return 0;
     }
+    
+    // Легкий метод для получения количества непрочитанных (использует count)
+    private Integer getUnreadCountLight(Integer userId, Integer otherUserId) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        
+        try {
+            // Легкий запрос - только подсчет
+            String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.MESSAGES_TABLE + 
+                        "?sender_id=eq." + otherUserId + 
+                        "&receiver_id=eq." + userId + 
+                        "&is_read=eq.false" +
+                        "&select=count";
+            
+            HttpGet request = new HttpGet(url);
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Prefer", "count=exact");
+            
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            
+            if (statusCode == 200) {
+                // Supabase возвращает count в заголовках
+                org.apache.http.Header countHeader = response.getFirstHeader("Content-Range");
+                if (countHeader != null) {
+                    String countValue = countHeader.getValue();
+                    if (countValue != null && countValue.contains("/")) {
+                        String countStr = countValue.split("/")[1];
+                        try {
+                            return Integer.parseInt(countStr);
+                        } catch (NumberFormatException e) {
+                            System.out.println("Error parsing count: " + countStr);
+                        }
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error getting light unread count: " + e.getMessage());
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return 0;
+    }
+    
     // Получить историю сообщений между двумя пользователями
     public List<Message> getChatHistory(Integer user1Id, Integer user2Id) {
         List<Message> messages = new ArrayList<>();
@@ -698,6 +974,7 @@ public class SupabaseService {
         
         return messages;
     }
+    
     // Отправить сообщение
     public boolean sendMessage(Integer senderId, Integer receiverId, String messageText) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -745,6 +1022,7 @@ public class SupabaseService {
             }
         }
     }
+    
     // Пометить все сообщения от пользователя как прочитанные
     public boolean markMessagesAsRead(Integer userId, Integer otherUserId) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -788,6 +1066,7 @@ public class SupabaseService {
             }
         }
     }
+    
     // Парсинг сообщения из JSON
     private Message parseMessage(JsonObject jsonObject) {
         try {
@@ -833,6 +1112,58 @@ public class SupabaseService {
         return null;
     }
 
+    // Очистить кэш профилей (можно вызывать при logout)
+    public void clearProfileCache() {
+        userProfileCache.clear();
+        cacheExpiry.clear();
+        System.out.println("Profile cache cleared");
+    }
+
+    // Получить последние N сообщений пользователя (для загрузки lastMessageId)
+    public List<Message> getRecentMessages(Integer userId, int limit) {
+        List<Message> messages = new ArrayList<>();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        
+        try {
+            String url = SupabaseConfig.FULL_API_URL + SupabaseConfig.MESSAGES_TABLE + 
+                        "?or=(sender_id.eq." + userId + ",receiver_id.eq." + userId + ")" +
+                        "&order=created_at.desc" +
+                        "&limit=" + limit;
+            
+            HttpGet request = new HttpGet(url);
+            request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
+            request.setHeader("Authorization", SupabaseConfig.getAuthHeader());
+            request.setHeader("Content-Type", "application/json");
+            
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            
+            if (statusCode == 200) {
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+                
+                JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
+                
+                for (JsonElement element : jsonArray) {
+                    Message message = parseMessage(element.getAsJsonObject());
+                    if (message != null) {
+                        messages.add(message);
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error getting recent messages: " + e.getMessage());
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return messages;
+    }
 
     public void createTestChat(Integer user1Id, Integer user2Id) {
         System.out.println("Creating test chat between users " + user1Id + " and " + user2Id);

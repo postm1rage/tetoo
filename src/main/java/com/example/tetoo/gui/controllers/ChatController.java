@@ -23,19 +23,23 @@ import javafx.scene.text.FontWeight;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javafx.scene.control.ListView;
+// УДАЛИЛИ: import javax.swing.text.html.ListView;
+// JavaFX ListView уже импортируется через javafx.scene.control.*
+// Если нужен явный импорт, добавь: import javafx.scene.control.ListView;
 
 public class ChatController implements Initializable {
     
     // UI Elements
-    @FXML private ListView<Chat> chatsListView;
-    @FXML private ListView<Message> messagesListView;
+    @FXML private javafx.scene.control.ListView<Chat> chatsListView;
+    @FXML private javafx.scene.control.ListView<Message> messagesListView;
     @FXML private TextArea messageInputArea;
     @FXML private Button sendMessageButton;
     @FXML private Label chatPartnerNameLabel;
@@ -44,12 +48,12 @@ public class ChatController implements Initializable {
     @FXML private VBox noChatSelectedPane;
     @FXML private StackPane mainChatPane;
     @FXML private HBox chatMainContainer;
-    // УДАЛИЛИ: @FXML private HBox messageInputWrapper;
     
     // Services and State
     private SupabaseService supabaseService;
     private Chat selectedChat;
     private ScheduledExecutorService scheduler;
+    private LocalDateTime lastPollTime = LocalDateTime.now().minusMinutes(5);
     
     // Constants
     private static final DateTimeFormatter TIME_FORMATTER = 
@@ -59,7 +63,7 @@ public class ChatController implements Initializable {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("ChatController initialized");
+        System.out.println("ChatController initialized with OPTIMIZED polling");
         
         // Initialize services
         supabaseService = new SupabaseService();
@@ -72,8 +76,8 @@ public class ChatController implements Initializable {
             loadUserChats();
         }
         
-        // Start auto-updates
-        startChatUpdates();
+        // Start OPTIMIZED auto-updates (вместо startChatUpdates)
+        startOptimizedPolling();
         
         // Устанавливаем растягивание
         HBox.setHgrow(chatArea, Priority.ALWAYS);
@@ -123,7 +127,11 @@ public class ChatController implements Initializable {
                     String timeStr = "";
                     if (chat.getLastMessage() != null && chat.getLastMessage().getCreatedAt() != null) {
                         LocalDateTime time = chat.getLastMessage().getCreatedAt();
-                        timeStr = time.format(TIME_FORMATTER);
+                        if (time.toLocalDate().equals(LocalDateTime.now().toLocalDate())) {
+                            timeStr = time.format(TIME_FORMATTER);
+                        } else {
+                            timeStr = time.format(DATE_FORMATTER);
+                        }
                     }
                     Label timeLabel = new Label(timeStr);
                     timeLabel.setFont(Font.font("Segoe UI", 12));
@@ -256,6 +264,7 @@ public class ChatController implements Initializable {
                 if (newValue != null) {
                     loadChatMessages(newValue);
                     showChatArea();
+                    lastPollTime = LocalDateTime.now(); // Сбрасываем время для активного чата
                 } else {
                     showNoChatSelected();
                 }
@@ -278,7 +287,6 @@ public class ChatController implements Initializable {
         // CSS классы для элементов ввода
         messageInputArea.getStyleClass().add("message-input-area");
         sendMessageButton.getStyleClass().add("chat-send-button");
-        // УДАЛИЛИ: messageInputWrapper.getStyleClass().add("message-input-wrapper");
         chatPartnerNameLabel.getStyleClass().add("chat-header-name");
         chatPartnerInfoLabel.getStyleClass().add("chat-header-info");
         chatArea.getStyleClass().add("chat-area");
@@ -351,6 +359,9 @@ public class ChatController implements Initializable {
                 // Update unread count in chats list
                 chat.resetUnreadCount();
                 refreshChatsList();
+                
+                // Обновляем время последнего опроса
+                lastPollTime = LocalDateTime.now();
             });
         }
     }
@@ -370,30 +381,48 @@ public class ChatController implements Initializable {
         if (selectedChat != null && !messageInputArea.getText().trim().isEmpty()) {
             Integer currentUserId = SessionManager.getInstance().getCurrentUserId();
             String messageText = messageInputArea.getText().trim();
+            Integer receiverId = selectedChat.getOtherUser().getUserId();
             
-            System.out.println("Sending message: " + messageText);
+            System.out.println("Sending message to user " + receiverId + ": " + messageText);
             
             // Send message
-            boolean success = supabaseService.sendMessage(
-                currentUserId,
-                selectedChat.getOtherUser().getUserId(),
-                messageText
-            );
+            boolean success = supabaseService.sendMessage(currentUserId, receiverId, messageText);
             
             if (success) {
                 // Clear input
                 messageInputArea.clear();
                 
-                // Reload messages
-                loadChatMessages(selectedChat);
+                // Создаем локальное сообщение для немедленного отображения
+                Message localMessage = new Message();
+                localMessage.setSenderId(currentUserId);
+                localMessage.setReceiverId(receiverId);
+                localMessage.setMessageText(messageText);
+                localMessage.setCreatedAt(LocalDateTime.now());
+                localMessage.setIsRead(false);
                 
-                // Reload chats list
-                loadUserChats();
+                // Добавляем в UI
+                addSingleMessageToUI(localMessage);
+                
+                // Обновляем список чатов
+                updateLastMessageInChatList(localMessage);
+                
             } else {
                 System.out.println("Failed to send message");
                 showErrorMessage("Failed to send message");
             }
         }
+    }
+    
+    private void addSingleMessageToUI(Message message) {
+        // Проверяем, нет ли уже такого сообщения в списке
+        for (Message existing : messagesListView.getItems()) {
+            if (existing.getId() != null && existing.getId().equals(message.getId())) {
+                return; // Сообщение уже есть
+            }
+        }
+        
+        messagesListView.getItems().add(message);
+        messagesListView.scrollTo(messagesListView.getItems().size() - 1);
     }
     
     private void showChatArea() {
@@ -407,34 +436,238 @@ public class ChatController implements Initializable {
     }
     
     private void refreshChatsList() {
-        chatsListView.refresh();
+        Platform.runLater(() -> {
+            chatsListView.refresh();
+        });
     }
     
     private void showErrorMessage(String message) {
         // Could be enhanced with dialog or status label
         System.err.println("Chat Error: " + message);
+        
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Chat Error");
+            alert.setHeaderText("Error sending message");
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
     
-    private void startChatUpdates() {
-        scheduler = Executors.newScheduledThreadPool(1);
+    private void startOptimizedPolling() {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdownNow();
+        }
         
-        // Update chats every 10 seconds
+        scheduler = Executors.newScheduledThreadPool(2); // Два потока для разных задач
+        
+        System.out.println("Starting OPTIMIZED polling...");
+        
+        // 1. БЫСТРЫЙ ПОЛЛИНГ: Для активного чата (каждые 3 секунды)
         scheduler.scheduleAtFixedRate(() -> {
-            Platform.runLater(() -> {
-                if (SessionManager.getInstance().isLoggedIn()) {
-                    loadUserChats();
-                    
-                    // Refresh selected chat messages
-                    if (selectedChat != null) {
-                        loadChatMessages(selectedChat);
+            try {
+                Platform.runLater(() -> {
+                    if (SessionManager.getInstance().isLoggedIn() && selectedChat != null) {
+                        checkForNewMessagesInCurrentChat();
                     }
+                });
+            } catch (Exception e) {
+                System.out.println("Error in active chat polling: " + e.getMessage());
+            }
+        }, 0, 3, TimeUnit.SECONDS);
+        
+        // 2. МЕДЛЕННЫЙ ПОЛЛИНГ: Для списка чатов (каждые 30 секунд)
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                Platform.runLater(() -> {
+                    if (SessionManager.getInstance().isLoggedIn()) {
+                        refreshChatsListOnly();
+                    }
+                });
+            } catch (Exception e) {
+                System.out.println("Error in chat list polling: " + e.getMessage());
+            }
+        }, 10, 30, TimeUnit.SECONDS);
+        
+        System.out.println("Optimized polling started: Active chat=3s, Chat list=30s");
+    }
+
+    private void checkForNewMessagesInCurrentChat() {
+        if (selectedChat == null) return;
+        
+        Integer currentUserId = SessionManager.getInstance().getCurrentUserId();
+        Integer otherUserId = selectedChat.getOtherUser().getUserId();
+        
+        // Получаем время последнего сообщения в текущем чате
+        LocalDateTime lastMessageTime = getLastMessageTimeInCurrentChat();
+        
+        // Загружаем только НОВЫЕ сообщения (после последнего опроса)
+        LocalDateTime sinceTime = lastPollTime.isBefore(lastMessageTime) ? 
+                                 lastMessageTime : lastPollTime;
+        
+        List<Message> newMessages = supabaseService.getNewMessagesSince(
+            currentUserId, 
+            otherUserId, 
+            sinceTime
+        );
+        
+        if (!newMessages.isEmpty()) {
+            System.out.println("Found " + newMessages.size() + " new messages in active chat");
+            addNewMessagesToUI(newMessages);
+            
+            // Обновляем последнее сообщение в списке чатов
+            updateLastMessageInChatList(newMessages.get(newMessages.size() - 1));
+            
+            // Обновляем время последнего опроса
+            lastPollTime = LocalDateTime.now();
+        }
+    }
+
+    private LocalDateTime getLastMessageTimeInCurrentChat() {
+        if (messagesListView.getItems().isEmpty()) {
+            return LocalDateTime.now().minusDays(1);
+        }
+        
+        // Возвращаем время последнего сообщения в списке
+        Message lastMessage = messagesListView.getItems().get(messagesListView.getItems().size() - 1);
+        return lastMessage.getCreatedAt() != null ? 
+               lastMessage.getCreatedAt() : 
+               LocalDateTime.now().minusHours(1);
+    }
+
+    private void addNewMessagesToUI(List<Message> newMessages) {
+        for (Message message : newMessages) {
+            // Проверяем, нет ли уже такого сообщения
+            boolean exists = false;
+            for (Message existing : messagesListView.getItems()) {
+                if (existing.getId() != null && existing.getId().equals(message.getId())) {
+                    exists = true;
+                    break;
                 }
-            });
-        }, 5, 10, TimeUnit.SECONDS);
+            }
+            
+            if (!exists) {
+                messagesListView.getItems().add(message);
+            }
+        }
+        
+        // Прокручиваем к последнему сообщению
+        if (!newMessages.isEmpty()) {
+            messagesListView.scrollTo(messagesListView.getItems().size() - 1);
+            
+            // Помечаем как прочитанные если сообщения от собеседника
+            Integer currentUserId = SessionManager.getInstance().getCurrentUserId();
+            Message lastNewMessage = newMessages.get(newMessages.size() - 1);
+            
+            if (lastNewMessage.getSenderId() != null && 
+                !lastNewMessage.getSenderId().equals(currentUserId) && 
+                !lastNewMessage.getIsRead()) {
+                
+                supabaseService.markMessagesAsRead(currentUserId, lastNewMessage.getSenderId());
+                
+                // Обновляем счетчик непрочитанных
+                selectedChat.resetUnreadCount();
+                refreshChatsList();
+            }
+        }
+    }
+
+    private void updateLastMessageInChatList(Message lastMessage) {
+        Platform.runLater(() -> {
+            for (Chat chat : chatsListView.getItems()) {
+                Integer chatOtherUserId = chat.getOtherUser().getUserId();
+                Integer chatUserId = chat.getUser1Id().equals(SessionManager.getInstance().getCurrentUserId()) ? 
+                                   chat.getUser2Id() : chat.getUser1Id();
+                
+                if (chatOtherUserId != null && chatOtherUserId.equals(lastMessage.getSenderId()) ||
+                    chatOtherUserId != null && chatOtherUserId.equals(lastMessage.getReceiverId()) ||
+                    chatUserId != null && chatUserId.equals(lastMessage.getSenderId()) ||
+                    chatUserId != null && chatUserId.equals(lastMessage.getReceiverId())) {
+                    
+                    chat.setLastMessage(lastMessage);
+                    
+                    // Если сообщение от собеседника и не прочитано, увеличиваем счетчик
+                    Integer currentUserId = SessionManager.getInstance().getCurrentUserId();
+                    if (lastMessage.getSenderId() != null && 
+                        !lastMessage.getSenderId().equals(currentUserId) && 
+                        !lastMessage.getIsRead()) {
+                        
+                        if (chat.getUnreadCount() == null) {
+                            chat.setUnreadCount(1);
+                        } else {
+                            chat.setUnreadCount(chat.getUnreadCount() + 1);
+                        }
+                    }
+                    break;
+                }
+            }
+            refreshChatsList();
+        });
+    }
+
+    private void refreshChatsListOnly() {
+        System.out.println("Refreshing chats list (light refresh)...");
+        
+        Integer currentUserId = SessionManager.getInstance().getCurrentUserId();
+        if (currentUserId != null) {
+            try {
+                // Загружаем только ОСНОВНУЮ информацию о чатах
+                List<Chat> updatedChats = supabaseService.getChatsLight(currentUserId);
+                
+                Platform.runLater(() -> {
+                    // Обновляем существующие чаты, сохраняя selection
+                    Chat previouslySelected = selectedChat;
+                    
+                    if (!updatedChats.isEmpty()) {
+                        // Сохраняем непрочитанные счетчики из текущего списка
+                        Map<Integer, Integer> unreadCounts = new HashMap<>();
+                        for (Chat chat : chatsListView.getItems()) {
+                            Integer otherUserId = chat.getOtherUser().getUserId();
+                            if (otherUserId != null && chat.getUnreadCount() != null) {
+                                unreadCounts.put(otherUserId, chat.getUnreadCount());
+                            }
+                        }
+                        
+                        // Обновляем список
+                        chatsListView.getItems().setAll(updatedChats);
+                        
+                        // Восстанавливаем счетчики
+                        for (Chat chat : chatsListView.getItems()) {
+                            Integer otherUserId = chat.getOtherUser().getUserId();
+                            if (otherUserId != null && unreadCounts.containsKey(otherUserId)) {
+                                chat.setUnreadCount(unreadCounts.get(otherUserId));
+                            }
+                        }
+                        
+                        // Восстанавливаем selection
+                        if (previouslySelected != null && previouslySelected.getOtherUser() != null) {
+                            Integer selectedUserId = previouslySelected.getOtherUser().getUserId();
+                            for (int i = 0; i < chatsListView.getItems().size(); i++) {
+                                Chat chat = chatsListView.getItems().get(i);
+                                if (chat.getOtherUser() != null && 
+                                    chat.getOtherUser().getUserId() != null &&
+                                    chat.getOtherUser().getUserId().equals(selectedUserId)) {
+                                    chatsListView.getSelectionModel().select(i);
+                                    selectedChat = chat;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        chatsListView.refresh();
+                        System.out.println("Chat list refreshed: " + updatedChats.size() + " chats");
+                    }
+                });
+            } catch (Exception e) {
+                System.out.println("Error refreshing chat list: " + e.getMessage());
+            }
+        }
     }
     
     // Cleanup method
     public void shutdown() {
+        System.out.println("ChatController shutdown initiated...");
+        
         if (scheduler != null && !scheduler.isShutdown()) {
             scheduler.shutdown();
             try {
@@ -445,7 +678,26 @@ public class ChatController implements Initializable {
                 scheduler.shutdownNow();
                 Thread.currentThread().interrupt();
             }
+            System.out.println("Scheduler shutdown complete");
         }
+        
+        // Очищаем кэш профилей
+        if (supabaseService != null) {
+            supabaseService.clearProfileCache();
+        }
+        
         System.out.println("ChatController shutdown completed");
+    }
+    
+    // Метод для принудительного обновления чатов
+    public void forceRefreshChats() {
+        if (SessionManager.getInstance().isLoggedIn()) {
+            loadUserChats();
+        }
+    }
+    
+    // Геттер для selectedChat (может понадобиться извне)
+    public Chat getSelectedChat() {
+        return selectedChat;
     }
 }
