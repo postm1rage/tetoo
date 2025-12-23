@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.*?>
 
 <BorderPane fx:id="mainPane" prefHeight="600.0" prefWidth="900.0"
-            stylesheets="@../styles/dashboard.css, @../styles/chats.css, @../styles/likes.css"
+            stylesheets="@../styles/dashboard.css, @../styles/chats.css, @../styles/likes.css, @../styles/matches.css"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.tetoo.gui.controllers.DashboardController">
@@ -124,13 +124,12 @@
                 <!-- Include likes panel -->
                 <fx:include source="likes_panel.fxml" fx:id="likesPanel" />
             </VBox>
+
             <!-- Matches content (hidden by default) -->
-            <VBox fx:id="matchesContent" spacing="15.0" visible="false" style="-fx-padding: 20;">
-                <Label text="Matches" styleClass="section-title" />
-                <Label text="People you've matched with" styleClass="info-text" />
-                <Button mnemonicParsing="false" onAction="#handleViewMatches"
-                        styleClass="action-btn" text="View All Matches" />
-            </VBox> 
+            <VBox fx:id="matchesContent" spacing="0" visible="false" StackPane.alignment="CENTER">
+                <!-- Include matches panel -->
+                <fx:include source="matches_panel.fxml" fx:id="matchesPanel" />
+            </VBox>
 
         </StackPane>
     </center>

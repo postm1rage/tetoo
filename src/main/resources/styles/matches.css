@@ -1,353 +1,194 @@
-/* Matches Page Styles */
+/* ============================================
+   MATCHES SECTION STYLES - СВЕТЛАЯ ТЕМА
+   ============================================ */
 
-/* Main Container */
-.matches-container {
+/* Основные стили для панели матчей */
+.matches-panel {
     -fx-background-color: white;
+    -fx-padding: 15px;
+    -fx-spacing: 15px;
+    -fx-alignment: TOP_CENTER;
+    -fx-max-width: 450px;
+}
+
+/* Заголовок */
+.matches-title {
+    -fx-text-fill: #ec4b6e;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10px 0;
+}
+
+/* Контейнер с матчами */
+.matches-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
     -fx-padding: 0;
+    -fx-pref-height: 400px;
+    -fx-min-height: 400px;
 }
 
-.matches-header {
-    -fx-padding: 0 0 20px 0;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 0 1px 0;
-    -fx-padding: 0 0 25px 0;
+.matches-scroll-pane .viewport {
+    -fx-background-color: transparent;
 }
 
-/* Stats Section */
-.matches-stats {
-    -fx-background-color: linear-gradient(135deg, #ec4b6e, #d64062);
-    -fx-border-radius: 20px;
-    -fx-background-radius: 20px;
-    -fx-padding: 30px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5);
-    -fx-spacing: 40px;
-    -fx-alignment: center;
+/* Контейнер для карточек матчей */
+#matchesContainer {
+    -fx-padding: 5px;
+    -fx-spacing: 10px;
+    -fx-alignment: TOP_CENTER;
 }
 
-.stat-item {
-    -fx-alignment: center;
-    -fx-spacing: 8px;
-    -fx-padding: 10px;
-}
-
-.stat-number {
-    -fx-font-size: 42px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
-}
-
-.stat-label {
-    -fx-font-size: 16px;
-    -fx-text-fill: rgba(255, 255, 255, 0.95);
-    -fx-font-weight: bold;
-    -fx-text-alignment: center;
-}
-
-/* Match Cards Grid */
-.matches-grid-container {
-    -fx-hgap: 25px;
-    -fx-vgap: 25px;
-    -fx-padding: 30px 0;
-}
-
-/* Match Card */
+/* Карточка матча */
 .match-card {
     -fx-background-color: white;
-    -fx-border-radius: 20px;
-    -fx-background-radius: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 5);
-    -fx-border-color: #e0e0e0;
+    -fx-border-color: #ec4b6e;
     -fx-border-width: 1px;
-    -fx-padding: 30px 25px;
-    -fx-cursor: hand;
-    -fx-transition: all 0.3s ease;
-    -fx-alignment: center;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+    -fx-padding: 12px;
+    -fx-spacing: 10px;
+    -fx-pref-width: 280px;
+    -fx-max-width: 280px;
 }
 
 .match-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(236, 75, 110, 0.3), 20, 0, 0, 8);
-    -fx-border-color: #ec4b6e;
+    -fx-effect: dropshadow(gaussian, rgba(236, 75, 110, 0.2), 8, 0, 0, 3);
+    -fx-border-color: #d64062;
     -fx-border-width: 2px;
-    -fx-translate-y: -8px;
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
 }
 
-/* Avatar Section */
+/* Верхняя часть карточки (аватар и имя) */
+.match-card-header {
+    -fx-spacing: 10px;
+    -fx-alignment: CENTER_LEFT;
+}
+
 .match-avatar-container {
-    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
 }
 
-.match-avatar {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 4);
-    -fx-border-radius: 50%;
-    -fx-background-radius: 50%;
-    -fx-border-width: 3px;
-    -fx-border-color: white;
-}
-
-.online-indicator {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
-    -fx-stroke: white;
+.match-avatar-circle {
+    -fx-fill: #f0f0f0;
+    -fx-stroke: #ec4b6e;
     -fx-stroke-width: 2px;
 }
 
-/* Info Section */
-.match-info {
-    -fx-spacing: 10px;
-    -fx-alignment: center;
-    -fx-padding: 15px 0 0 0;
+.match-avatar-image {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 3, 0, 0, 1);
 }
 
 .match-name {
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
     -fx-text-fill: #333333;
-    -fx-text-alignment: center;
-}
-
-.match-time {
-    -fx-font-size: 14px;
-    -fx-text-fill: #ec4b6e;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-alignment: center;
-    -fx-background-color: #fff0f3;
-    -fx-background-radius: 15px;
-    -fx-padding: 5px 15px;
-    -fx-border-radius: 15px;
-    -fx-effect: dropshadow(gaussian, rgba(236, 75, 110, 0.1), 3, 0, 0, 1);
-}
-
-.match-interests {
-    -fx-font-size: 15px;
-    -fx-text-fill: #666666;
-    -fx-font-style: italic;
-    -fx-text-alignment: center;
     -fx-wrap-text: true;
-    -fx-max-width: 250px;
-    -fx-padding: 10px 0;
+    -fx-max-width: 150px;
 }
 
-/* Actions Section */
-.match-actions {
-    -fx-spacing: 12px;
-    -fx-padding: 20px 0 0 0;
-    -fx-alignment: center;
+.match-age-location {
+    -fx-text-fill: #666666;
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
 }
 
-.match-action-btn {
-    -fx-background-color: #ec4b6e;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-padding: 12px 25px;
-    -fx-border-radius: 25px;
-    -fx-background-radius: 25px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(236, 75, 110, 0.3), 5, 0, 0, 2);
-    -fx-min-width: 120px;
-}
-
-.match-action-btn:hover {
-    -fx-background-color: #d64062;
-    -fx-effect: dropshadow(gaussian, rgba(236, 75, 110, 0.5), 8, 0, 0, 3);
-}
-
-.match-secondary-btn {
-    -fx-background-color: #f0f0f0;
-    -fx-text-fill: #ec4b6e;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-padding: 12px 25px;
-    -fx-border-radius: 25px;
-    -fx-background-radius: 25px;
-    -fx-cursor: hand;
-    -fx-min-width: 120px;
-}
-
-.match-secondary-btn:hover {
-    -fx-background-color: #e0e0e0;
-}
-
-/* Conversations Section */
-.conversations-section {
-    -fx-padding: 40px 0 20px 0;
-    -fx-background-color: #f8f9fa;
-    -fx-border-radius: 20px;
-    -fx-background-radius: 20px;
-    -fx-padding: 30px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 3);
-    -fx-margin-top: 30px;
-}
-
-.subsection-title {
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333333;
-    -fx-padding: 0 0 20px 0;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 0 1px 0;
-}
-
-/* Conversations List */
-.conversations-list {
-    -fx-spacing: 15px;
-    -fx-padding: 20px 0 0 0;
-}
-
-.conversation-item {
-    -fx-background-color: white;
-    -fx-border-radius: 15px;
-    -fx-background-radius: 15px;
-    -fx-padding: 20px;
-    -fx-border-color: #f0f0f0;
-    -fx-border-width: 1px;
-    -fx-cursor: hand;
-    -fx-transition: all 0.2s ease;
-}
-
-.conversation-item:hover {
-    -fx-background-color: #f9f9f9;
-    -fx-border-color: #ec4b6e;
-    -fx-effect: dropshadow(gaussian, rgba(236, 75, 110, 0.1), 5, 0, 0, 2);
-}
-
-.conversation-avatar {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
-}
-
-.conversation-info {
+/* Средняя часть карточки (информация) */
+.match-info-container {
     -fx-spacing: 5px;
+    -fx-alignment: CENTER_LEFT;
 }
 
-.conversation-name {
-    -fx-font-size: 17px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333333;
-}
-
-.conversation-time {
-    -fx-font-size: 13px;
-    -fx-text-fill: #999999;
-    -fx-font-weight: bold;
-}
-
-.conversation-preview {
-    -fx-font-size: 15px;
-    -fx-text-fill: #666666;
-    -fx-max-width: 300px;
-    -fx-wrap-text: true;
-}
-
-/* Empty States */
-.matches-empty-state {
-    -fx-alignment: center;
-    -fx-padding: 100px 20px;
-    -fx-spacing: 30px;
-    -fx-background-color: #f8f9fa;
-    -fx-border-radius: 20px;
-    -fx-background-radius: 20px;
-}
-
-.matches-empty-state-icon {
-    -fx-opacity: 0.5;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
-}
-
-.matches-empty-state-text {
-    -fx-font-size: 24px;
-    -fx-text-fill: #999999;
-    -fx-text-alignment: center;
-    -fx-font-weight: bold;
-}
-
-.matches-empty-state-hint {
-    -fx-font-size: 18px;
-    -fx-text-fill: #888888;
-    -fx-text-alignment: center;
-    -fx-font-style: italic;
-    -fx-max-width: 500px;
-    -fx-wrap-text: true;
-}
-
-/* Match Badges */
-.match-badge {
+.match-info-label {
+    -fx-text-fill: #ec4b6e;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
+}
+
+.match-info-value {
+    -fx-text-fill: #333333;
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
+}
+
+/* Нижняя часть карточки (кнопки) */
+.match-actions-container {
+    -fx-spacing: 10px;
+    -fx-alignment: CENTER;
+}
+
+/* Кнопка профиля */
+.profile-btn {
     -fx-text-fill: white;
-    -fx-background-color: #4CAF50;
-    -fx-background-radius: 10px;
-    -fx-padding: 3px 10px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
-}
-
-.new-match-badge {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
     -fx-background-color: #ec4b6e;
+    -fx-background-radius: 15px;
+    -fx-padding: 6px 20px;
+    -fx-cursor: hand;
+    -fx-pref-width: 80px;
 }
 
-/* Loading State */
-.matches-loading {
-    -fx-alignment: center;
-    -fx-padding: 150px;
+.profile-btn:hover {
+    -fx-background-color: #d64062;
 }
 
-.matches-loading-text {
-    -fx-font-size: 18px;
-    -fx-text-fill: #ec4b6e;
+/* Кнопка чата */
+.chat-btn {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-color: #44cc44;
+    -fx-background-radius: 15px;
+    -fx-padding: 6px 20px;
+    -fx-cursor: hand;
+    -fx-pref-width: 80px;
+}
+
+.chat-btn:hover {
+    -fx-background-color: #3db33d;
+}
+
+/* Кнопка удаления */
+.delete-btn {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-color: #ff4444;
+    -fx-background-radius: 15px;
+    -fx-padding: 6px 20px;
+    -fx-cursor: hand;
+    -fx-pref-width: 80px;
+}
+
+.delete-btn:hover {
+    -fx-background-color: #e63939;
+}
+
+/* Контейнер для сообщения "нет матчей" */
+.no-matches-container {
+    -fx-padding: 40px;
+    -fx-alignment: CENTER;
+    -fx-spacing: 10px;
+}
+
+/* Текст "нет матчей" */
+.no-matches-label {
+    -fx-text-fill: #888888;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .matches-grid-container {
-        -fx-hgap: 20px;
-        -fx-vgap: 20px;
-    }
-    
-    .match-card {
-        -fx-padding: 25px 20px;
-    }
-    
-    .matches-stats {
-        -fx-spacing: 30px;
-        -fx-padding: 25px;
-    }
-    
-    .stat-number {
-        -fx-font-size: 36px;
-    }
+.no-matches-hint {
+    -fx-text-fill: #aaaaaa;
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-alignment: CENTER;
+    -fx-max-width: 250px;
 }
 
-@media (max-width: 768px) {
-    .matches-grid-container {
-        -fx-hgap: 15px;
-        -fx-vgap: 15px;
-        -fx-padding: 20px 0;
-    }
-    
-    .match-card {
-        -fx-padding: 20px 15px;
-    }
-    
-    .matches-stats {
-        -fx-spacing: 20px;
-        -fx-padding: 20px;
-    }
-    
-    .stat-number {
-        -fx-font-size: 28px;
-    }
-    
-    .stat-label {
-        -fx-font-size: 14px;
-    }
-    
-    .match-name {
-        -fx-font-size: 20px;
-    }
-    
-    .match-interests {
-        -fx-font-size: 14px;
-    }
+/* Прогресс бар */
+.loading-progress {
+    -fx-accent: #ec4b6e;
 }

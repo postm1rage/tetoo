@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<VBox fx:id="mainContainer" alignment="TOP_CENTER" spacing="10"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.tetoo.gui.controllers.MatchesController"
+      styleClass="matches-panel">
+
+    <!-- Заголовок -->
+    <Label text="Your Matches" styleClass="matches-title" />
+
+    <!-- Список матчей -->
+    <ScrollPane fx:id="matchesScrollPane" fitToWidth="true" 
+                hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                styleClass="matches-scroll-pane">
+        <VBox fx:id="matchesContainer" spacing="10" alignment="TOP_CENTER" />
+    </ScrollPane>
+
+    <!-- Статус (если нет матчей) -->
+    <VBox fx:id="noMatchesContainer" alignment="CENTER" spacing="10" 
+          styleClass="no-matches-container">
+        <Label fx:id="noMatchesLabel" text="No matches yet" 
+               styleClass="no-matches-label" />
+        <Label text="Like someone and wait for them to like you back!" 
+               styleClass="no-matches-hint" />
+    </VBox>
+
+    <!-- Прогресс бар -->
+    <ProgressBar fx:id="loadingProgress" prefWidth="300.0" visible="false" />
+
+</VBox>

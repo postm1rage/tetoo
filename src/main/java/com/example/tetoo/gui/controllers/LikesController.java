@@ -4,6 +4,10 @@ import com.example.tetoo.auth.SessionManager;
 import com.example.tetoo.model.UserProfile;
 import com.example.tetoo.service.LikeService;
 import com.example.tetoo.service.interfaces.ILikeService;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,12 +18,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -130,8 +136,20 @@ public class LikesController implements Initializable {
     private void handleLike() {
         if (currentUserProfile == null) return;
         
+        Integer targetUserId = currentUserProfile.getUserId(); // Изменяем getUserId()
+        
+        // Отладочная информация
+        System.out.println("Attempting to like user ID: " + targetUserId);
+        System.out.println("Current user ID: " + currentUserId);
+        
+        if (targetUserId == null) {
+            System.out.println("ERROR: Target user ID is null!");
+            showError("Cannot like user: user ID not found");
+            return;
+        }
+        
         // Отправляем лайк
-        boolean success = likeService.sendLike(currentUserId, currentUserProfile.getId(), "like");
+        boolean success = likeService.sendLike(currentUserId, targetUserId, "like");
         
         if (success) {
             System.out.println("Liked user: " + currentUserProfile.getFirstName());
@@ -139,7 +157,7 @@ public class LikesController implements Initializable {
             totalLikesSent++;
             
             // Проверяем на взаимный лайк
-            boolean isMutualLike = likeService.checkMutualLike(currentUserId, currentUserProfile.getId());
+            boolean isMutualLike = likeService.checkMutualLike(currentUserId, targetUserId);
             if (isMutualLike) {
                 matchesMade++;
                 System.out.println("Mutual like! Match created with " + currentUserProfile.getFirstName());
@@ -170,8 +188,16 @@ public class LikesController implements Initializable {
     private void handleDislike() {
         if (currentUserProfile == null) return;
         
+        Integer targetUserId = currentUserProfile.getUserId(); // Изменяем getUserId()
+        
+        if (targetUserId == null) {
+            System.out.println("ERROR: Target user ID is null!");
+            showError("Cannot dislike user: user ID not found");
+            return;
+        }
+        
         // Отправляем дизлайк
-        boolean success = likeService.sendLike(currentUserId, currentUserProfile.getId(), "dislike");
+        boolean success = likeService.sendLike(currentUserId, targetUserId, "dislike");
         
         if (success) {
             System.out.println("Disliked user: " + currentUserProfile.getFirstName());
@@ -239,6 +265,9 @@ public class LikesController implements Initializable {
         // Устанавливаем имя
         String fullName = user.getFirstName() + " " + user.getLastName();
         userName.setText(fullName);
+        
+        // Проверяем ID пользователя
+        System.out.println("Loading user profile with ID: " + user.getUserId());
         
         // Устанавливаем возраст
         if (user.getAge() != null) {
@@ -344,34 +373,40 @@ public class LikesController implements Initializable {
     }
 
     private void showLikeAnimation() {
-        // Простая анимация лайка
+        // Получаем корневой контейнер сцены
+        Pane root = (Pane) mainContainer.getScene().getRoot();
+        
+        // Создаем анимацию лайка
         Label likeAnimation = new Label("♥");
         likeAnimation.setFont(Font.font("System", FontWeight.BOLD, 48));
         likeAnimation.setTextFill(Color.web("#44cc44"));
         likeAnimation.setOpacity(0);
         
-        StackPane root = (StackPane) userCardContainer.getParent();
         root.getChildren().add(likeAnimation);
         
-        likeAnimation.setTranslateX(likeBtn.getLayoutX() + likeBtn.getWidth() / 2 - 24);
-        likeAnimation.setTranslateY(likeBtn.getLayoutY() - 50);
+        // Позиционируем анимацию относительно кнопки лайка
+        double sceneX = likeBtn.localToScene(likeBtn.getLayoutX() + likeBtn.getWidth() / 2, 0).getX();
+        double sceneY = likeBtn.localToScene(0, likeBtn.getLayoutY() + likeBtn.getHeight() / 2).getY();
+        
+        likeAnimation.setLayoutX(sceneX - 24);
+        likeAnimation.setLayoutY(sceneY - 24);
         
         // Анимация
-        javafx.animation.Timeline timeline = new javafx.animation.Timeline(
-            new javafx.animation.KeyFrame(
-                javafx.util.Duration.millis(0),
-                new javafx.animation.KeyValue(likeAnimation.opacityProperty(), 0),
-                new javafx.animation.KeyValue(likeAnimation.translateYProperty(), likeAnimation.getTranslateY())
+        Timeline timeline = new Timeline(
+            new KeyFrame(
+                Duration.millis(0),
+                new KeyValue(likeAnimation.opacityProperty(), 0),
+                new KeyValue(likeAnimation.translateYProperty(), 0)
             ),
-            new javafx.animation.KeyFrame(
-                javafx.util.Duration.millis(500),
-                new javafx.animation.KeyValue(likeAnimation.opacityProperty(), 1),
-                new javafx.animation.KeyValue(likeAnimation.translateYProperty(), likeAnimation.getTranslateY() - 100)
+            new KeyFrame(
+                Duration.millis(500),
+                new KeyValue(likeAnimation.opacityProperty(), 1),
+                new KeyValue(likeAnimation.translateYProperty(), -50)
             ),
-            new javafx.animation.KeyFrame(
-                javafx.util.Duration.millis(1000),
-                new javafx.animation.KeyValue(likeAnimation.opacityProperty(), 0),
-                new javafx.animation.KeyValue(likeAnimation.translateYProperty(), likeAnimation.getTranslateY() - 200)
+            new KeyFrame(
+                Duration.millis(1000),
+                new KeyValue(likeAnimation.opacityProperty(), 0),
+                new KeyValue(likeAnimation.translateYProperty(), -100)
             )
         );
         
@@ -380,34 +415,40 @@ public class LikesController implements Initializable {
     }
 
     private void showDislikeAnimation() {
-        // Простая анимация дизлайка
+        // Получаем корневой контейнер сцены
+        Pane root = (Pane) mainContainer.getScene().getRoot();
+        
+        // Создаем анимацию дизлайка
         Label dislikeAnimation = new Label("✕");
         dislikeAnimation.setFont(Font.font("System", FontWeight.BOLD, 48));
         dislikeAnimation.setTextFill(Color.web("#ff4444"));
         dislikeAnimation.setOpacity(0);
         
-        StackPane root = (StackPane) userCardContainer.getParent();
         root.getChildren().add(dislikeAnimation);
         
-        dislikeAnimation.setTranslateX(dislikeBtn.getLayoutX() + dislikeBtn.getWidth() / 2 - 24);
-        dislikeAnimation.setTranslateY(dislikeBtn.getLayoutY() - 50);
+        // Позиционируем анимацию относительно кнопки дизлайка
+        double sceneX = dislikeBtn.localToScene(dislikeBtn.getLayoutX() + dislikeBtn.getWidth() / 2, 0).getX();
+        double sceneY = dislikeBtn.localToScene(0, dislikeBtn.getLayoutY() + dislikeBtn.getHeight() / 2).getY();
+        
+        dislikeAnimation.setLayoutX(sceneX - 24);
+        dislikeAnimation.setLayoutY(sceneY - 24);
         
         // Анимация
-        javafx.animation.Timeline timeline = new javafx.animation.Timeline(
-            new javafx.animation.KeyFrame(
-                javafx.util.Duration.millis(0),
-                new javafx.animation.KeyValue(dislikeAnimation.opacityProperty(), 0),
-                new javafx.animation.KeyValue(dislikeAnimation.translateYProperty(), dislikeAnimation.getTranslateY())
+        Timeline timeline = new Timeline(
+            new KeyFrame(
+                Duration.millis(0),
+                new KeyValue(dislikeAnimation.opacityProperty(), 0),
+                new KeyValue(dislikeAnimation.translateYProperty(), 0)
             ),
-            new javafx.animation.KeyFrame(
-                javafx.util.Duration.millis(500),
-                new javafx.animation.KeyValue(dislikeAnimation.opacityProperty(), 1),
-                new javafx.animation.KeyValue(dislikeAnimation.translateYProperty(), dislikeAnimation.getTranslateY() - 100)
+            new KeyFrame(
+                Duration.millis(500),
+                new KeyValue(dislikeAnimation.opacityProperty(), 1),
+                new KeyValue(dislikeAnimation.translateYProperty(), -50)
             ),
-            new javafx.animation.KeyFrame(
-                javafx.util.Duration.millis(1000),
-                new javafx.animation.KeyValue(dislikeAnimation.opacityProperty(), 0),
-                new javafx.animation.KeyValue(dislikeAnimation.translateYProperty(), dislikeAnimation.getTranslateY() - 200)
+            new KeyFrame(
+                Duration.millis(1000),
+                new KeyValue(dislikeAnimation.opacityProperty(), 0),
+                new KeyValue(dislikeAnimation.translateYProperty(), -100)
             )
         );
         

@@ -21,7 +21,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import com.google.gson.JsonObject;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -31,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.http.client.methods.HttpPatch;
@@ -724,8 +724,9 @@ public class SupabaseService {
                     if (profileObj.has("birth_date")) {
                         String birthDateStr = profileObj.get("birth_date").getAsString();
                         try {
-                            LocalDateTime birthDate = LocalDateTime.parse(birthDateStr, DATE_FORMATTER);
-                            age = LocalDateTime.now().getYear() - birthDate.getYear();
+                            // Парсим как LocalDate, так как поле birth_date имеет тип DATE
+                            LocalDate birthDate = LocalDate.parse(birthDateStr);
+                            age = LocalDate.now().getYear() - birthDate.getYear();
                         } catch (DateTimeParseException e) {
                             System.out.println("Could not parse birth date: " + birthDateStr);
                         }

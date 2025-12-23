@@ -4,6 +4,7 @@ import com.example.tetoo.model.Like;
 import com.example.tetoo.model.User;
 import com.example.tetoo.model.UserProfile;
 import com.example.tetoo.repository.LikeRepository;
+import com.example.tetoo.repository.MatchRepository;
 import com.example.tetoo.service.interfaces.ILikeService;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +15,13 @@ public class LikeService implements ILikeService {
     private final LikeRepository likeRepository;
     private final SupabaseService supabaseService;
     private final Random random;
+    private final MatchRepository matchRepository;
     
     public LikeService() {
         this.likeRepository = new LikeRepository();
         this.supabaseService = new SupabaseService();
         this.random = new Random();
+        this.matchRepository = new MatchRepository();
     }
     
     @Override
@@ -46,8 +49,8 @@ public class LikeService implements ILikeService {
                 supabaseService.sendMessage(fromUserId, toUserId, "This user liked you!");
                 supabaseService.sendMessage(toUserId, fromUserId, "This user liked you!");
                 
-                // Можно также создать запись в таблице matches, если нужно
-                // createMatch(fromUserId, toUserId);
+                // СОЗДАЕМ МАТЧ
+                matchRepository.createMatch(fromUserId, toUserId);
             }
         }
         

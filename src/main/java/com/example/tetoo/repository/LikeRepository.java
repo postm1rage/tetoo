@@ -28,12 +28,14 @@ public class LikeRepository {
         DateTimeFormatter.ISO_DATE_TIME;
     private static final Gson gson = new Gson();
     
-    // Метод для отправки лайка/дизлайка в базу
     public boolean sendLike(Like like) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         
         try {
             String url = SupabaseConfig.FULL_API_URL + "likes";
+            System.out.println("=== SENDING LIKE ===");
+            System.out.println("URL: " + url);
+            
             HttpPost request = new HttpPost(url);
             
             request.setHeader("apikey", SupabaseConfig.SUPABASE_API_KEY);
@@ -47,27 +49,38 @@ public class LikeRepository {
             jsonBody.addProperty("to_user_id", like.getToUserId());
             jsonBody.addProperty("type", like.getType());
             
-            StringEntity entity = new StringEntity(jsonBody.toString());
+            String jsonString = jsonBody.toString();
+            System.out.println("JSON Request: " + jsonString);
+            
+            StringEntity entity = new StringEntity(jsonString);
             request.setEntity(entity);
             
             HttpResponse response = httpClient.execute(request);
             int statusCode = response.getStatusLine().getStatusCode();
             
+            System.out.println("Response status code: " + statusCode);
+            
+            // Читаем тело ответа
+            HttpEntity responseEntity = response.getEntity();
+            String responseBody = "";
+            if (responseEntity != null) {
+                responseBody = EntityUtils.toString(responseEntity);
+                System.out.println("Response body: " + responseBody);
+            }
+            
             if (statusCode == 201) {
-                System.out.println("Like sent: " + like);
+                System.out.println("Like sent successfully: " + like);
+                return true;
+            } else if (statusCode == 409) {
+                System.out.println("Like already exists: " + like);
                 return true;
             } else {
-                // Если это дубликат (код 409), то это тоже успех (лайк уже есть)
-                if (statusCode == 409) {
-                    System.out.println("Like already exists: " + like);
-                    return true;
-                }
                 System.out.println("Error sending like. Code: " + statusCode);
                 return false;
             }
             
         } catch (Exception e) {
-            System.out.println("Error sending like: " + e.getMessage());
+            System.out.println("Exception sending like: " + e.getMessage());
             e.printStackTrace();
             return false;
         } finally {

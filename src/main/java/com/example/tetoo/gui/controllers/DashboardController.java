@@ -27,6 +27,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import com.example.tetoo.gui.controllers.LikesController;
+import com.example.tetoo.gui.controllers.MatchesController;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -81,6 +82,14 @@ public class DashboardController implements Initializable {
     @FXML
     private VBox likesPanel;
 
+    // Matches controller reference (injected via fx:include)
+    @FXML
+    private MatchesController matchesPanelController;
+
+    // Matches panel reference
+    @FXML
+    private VBox matchesPanel;
+
     // Методы для перемещения окна (из версии HEAD)
     @FXML
     private void handleMousePressed(MouseEvent event) {
@@ -113,13 +122,20 @@ public class DashboardController implements Initializable {
         // Show profile by default
         showProfile();
 
-        // Инициализация контроллера лайков (если он существует)
+        // Инициализация контроллера лайков
         if (likesPanel != null) {
             // Контроллер автоматически инжектируется через fx:include
             // Нужно просто проверить, что он существует
             System.out.println("Likes panel found");
         } else {
             System.out.println("Likes panel not found - check fx:include in dashboard.fxml");
+        }
+
+        // Инициализация контроллера матчей
+        if (matchesPanel != null) {
+            System.out.println("Matches panel found");
+        } else {
+            System.out.println("Matches panel not found - check fx:include in dashboard.fxml");
         }
     }
     
@@ -374,6 +390,14 @@ public class DashboardController implements Initializable {
         hideAllContent();
         matchesContent.setVisible(true);
         statusLabel.setText("Viewing matches");
+        
+        // Обновляем данные в контроллере матчей
+        if (matchesPanelController != null) {
+            System.out.println("Refreshing matches panel");
+            matchesPanelController.refresh();
+        } else {
+            System.out.println("Matches panel controller is null");
+        }
     }
     
     @FXML
