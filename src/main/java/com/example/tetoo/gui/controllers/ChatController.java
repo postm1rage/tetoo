@@ -4,6 +4,7 @@ import com.example.tetoo.model.Chat;
 import com.example.tetoo.model.Message;
 import com.example.tetoo.model.UserProfile;
 import com.example.tetoo.service.SupabaseService;
+import com.example.tetoo.service.ChatService; // Исправленный импорт
 import com.example.tetoo.auth.SessionManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.control.ListView; // Явный импорт
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -31,15 +33,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-// УДАЛИЛИ: import javax.swing.text.html.ListView;
-// JavaFX ListView уже импортируется через javafx.scene.control.*
-// Если нужен явный импорт, добавь: import javafx.scene.control.ListView;
-
 public class ChatController implements Initializable {
     
     // UI Elements
-    @FXML private javafx.scene.control.ListView<Chat> chatsListView;
-    @FXML private javafx.scene.control.ListView<Message> messagesListView;
+    @FXML private ListView<Chat> chatsListView;
+    @FXML private ListView<Message> messagesListView;
     @FXML private TextArea messageInputArea;
     @FXML private Button sendMessageButton;
     @FXML private Label chatPartnerNameLabel;
@@ -49,6 +47,9 @@ public class ChatController implements Initializable {
     @FXML private StackPane mainChatPane;
     @FXML private HBox chatMainContainer;
     
+    private ChatService chatService;
+    private boolean isLoadingMessages = false;
+
     // Services and State
     private SupabaseService supabaseService;
     private Chat selectedChat;
@@ -63,20 +64,21 @@ public class ChatController implements Initializable {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("ChatController initialized with OPTIMIZED polling");
+        System.out.println("ChatController initialized with ASYNC loading");
         
         // Initialize services
         supabaseService = new SupabaseService();
+        chatService = new ChatService(supabaseService); // Добавляем ChatService
         
         // Setup UI
         setupChatUI();
         
         // Load initial data if user is logged in
         if (SessionManager.getInstance().isLoggedIn()) {
-            loadUserChats();
+            loadUserChatsAsync(); // Меняем на async версию
         }
         
-        // Start OPTIMIZED auto-updates (вместо startChatUpdates)
+        // Start OPTIMIZED auto-updates
         startOptimizedPolling();
         
         // Устанавливаем растягивание
@@ -330,40 +332,121 @@ public class ChatController implements Initializable {
         }
     }
     
-    private void loadChatMessages(Chat chat) {
-        if (chat != null) {
-            Integer currentUserId = SessionManager.getInstance().getCurrentUserId();
-            Integer otherUserId = chat.getOtherUser().getUserId();
+    // НОВЫЙ: Асинхронная загрузка чатов
+    private void loadUserChatsAsync() {
+        Integer currentUserId = SessionManager.getInstance().getCurrentUserId();
+        if (currentUserId != null) {
+            System.out.println("ASYNC: Loading chats for user: " + currentUserId);
             
-            System.out.println("Loading messages with user: " + otherUserId);
-            
-            // Update chat header
-            chatPartnerNameLabel.setText(chat.getOtherUser().getFullName());
-            chatPartnerInfoLabel.setText(chat.getOtherUser().getLocation());
-            
-            // Load messages
-            List<Message> messages = supabaseService.getChatHistory(currentUserId, otherUserId);
-            
-            Platform.runLater(() -> {
-                messagesListView.getItems().setAll(messages);
-                System.out.println("Loaded " + messages.size() + " messages");
-                
-                // Scroll to last message
-                if (!messages.isEmpty()) {
-                    messagesListView.scrollTo(messages.size() - 1);
-                }
-                
-                // Mark messages as read
-                supabaseService.markMessagesAsRead(currentUserId, otherUserId);
-                
-                // Update unread count in chats list
-                chat.resetUnreadCount();
-                refreshChatsList();
-                
-                // Обновляем время последнего опроса
-                lastPollTime = LocalDateTime.now();
-            });
+            chatService.getUserChatsAsync(currentUserId)
+                .thenAccept(chats -> {
+                    Platform.runLater(() -> {
+                        chatsListView.getItems().setAll(chats);
+                        System.out.println("ASYNC: Loaded " + chats.size() + " chats");
+                        
+                        if (!chats.isEmpty() && selectedChat == null) {
+                            chatsListView.getSelectionModel().selectFirst();
+                        }
+                    });
+                })
+                .exceptionally(e -> {
+                    Platform.runLater(() -> {
+                        System.out.println("ASYNC ERROR loading chats: " + e.getMessage());
+                        // Fallback к синхронному методу
+                        loadUserChats();
+                    });
+                    return null;
+                });
         }
+    }
+    
+    private void loadChatMessages(Chat chat) {
+        if (chat == null || isLoadingMessages) {
+            return; // Уже грузим или null
+        }
+        
+        Integer currentUserId = SessionManager.getInstance().getCurrentUserId();
+        Integer otherUserId = chat.getOtherUser().getUserId();
+        
+        System.out.println("ASYNC: Loading messages with user: " + otherUserId);
+        
+        // 1. МГНОВЕННО обновляем заголовок (не ждем загрузки сообщений)
+        chatPartnerNameLabel.setText(chat.getOtherUser().getFullName());
+        chatPartnerInfoLabel.setText(chat.getOtherUser().getLocation());
+        
+        // 2. ПОКАЗЫВАЕМ что грузим (убираем лаг "ничего не происходит")
+        showMessagesLoading();
+        isLoadingMessages = true;
+        
+        // 3. Запускаем загрузку В ФОНЕ (не блокируем UI)
+        chatService.getChatHistoryAsync(currentUserId, otherUserId)
+            .thenAccept(messages -> {
+                // Этот код выполнится когда сообщения загрузятся
+                Platform.runLater(() -> {
+                    System.out.println("ASYNC: Loaded " + messages.size() + " messages");
+                    
+                    // 4. Обновляем UI когда готово
+                    messagesListView.getItems().setAll(messages);
+                    
+                    // 5. Прокручиваем к последнему сообщению
+                    if (!messages.isEmpty()) {
+                        messagesListView.scrollTo(messages.size() - 1);
+                    }
+                    
+                    // 6. Помечаем как прочитанные
+                    supabaseService.markMessagesAsRead(currentUserId, otherUserId);
+                    
+                    // 7. Обновляем счетчик непрочитанных
+                    chat.resetUnreadCount();
+                    refreshChatsList();
+                    
+                    // 8. Скрываем индикатор загрузки
+                    hideMessagesLoading();
+                    isLoadingMessages = false;
+                });
+            })
+            .exceptionally(e -> {
+                // Обработка ошибок
+                Platform.runLater(() -> {
+                    System.out.println("ASYNC ERROR: " + e.getMessage());
+                    hideMessagesLoading();
+                    isLoadingMessages = false;
+                    showErrorMessage("Failed to load messages: " + e.getMessage());
+                });
+                return null;
+            });
+    }
+    
+    // Методы для показа/скрытия индикатора загрузки
+    private void showMessagesLoading() {
+        Platform.runLater(() -> {
+            // Простой индикатор - очищаем список и показываем текст
+            messagesListView.getItems().clear();
+            
+            // Создаем placeholder с индикатором
+            VBox loadingBox = new VBox(10);
+            loadingBox.setAlignment(Pos.CENTER);
+            loadingBox.setPadding(new Insets(50, 0, 50, 0));
+            
+            ProgressIndicator progress = new ProgressIndicator();
+            progress.setPrefSize(40, 40);
+            progress.getStyleClass().add("messages-loading-indicator");
+            
+            Label loadingLabel = new Label("Loading messages...");
+            loadingLabel.getStyleClass().add("loading-label");
+            
+            loadingBox.getChildren().addAll(progress, loadingLabel);
+            messagesListView.setPlaceholder(loadingBox);
+        });
+    }
+    
+    private void hideMessagesLoading() {
+        Platform.runLater(() -> {
+            // Возвращаем стандартный placeholder
+            Label noMessagesLabel = new Label("No messages yet");
+            noMessagesLabel.getStyleClass().add("no-messages-label");
+            messagesListView.setPlaceholder(noMessagesLabel);
+        });
     }
     
     @FXML
@@ -383,34 +466,47 @@ public class ChatController implements Initializable {
             String messageText = messageInputArea.getText().trim();
             Integer receiverId = selectedChat.getOtherUser().getUserId();
             
-            System.out.println("Sending message to user " + receiverId + ": " + messageText);
+            System.out.println("ASYNC: Sending message to user " + receiverId);
             
-            // Send message
-            boolean success = supabaseService.sendMessage(currentUserId, receiverId, messageText);
+            // 1. Мгновенно показываем сообщение локально
+            Message localMessage = createLocalMessage(currentUserId, receiverId, messageText);
+            addSingleMessageToUI(localMessage);
             
-            if (success) {
-                // Clear input
-                messageInputArea.clear();
-                
-                // Создаем локальное сообщение для немедленного отображения
-                Message localMessage = new Message();
-                localMessage.setSenderId(currentUserId);
-                localMessage.setReceiverId(receiverId);
-                localMessage.setMessageText(messageText);
-                localMessage.setCreatedAt(LocalDateTime.now());
-                localMessage.setIsRead(false);
-                
-                // Добавляем в UI
-                addSingleMessageToUI(localMessage);
-                
-                // Обновляем список чатов
-                updateLastMessageInChatList(localMessage);
-                
-            } else {
-                System.out.println("Failed to send message");
-                showErrorMessage("Failed to send message");
-            }
+            // 2. Очищаем поле ввода
+            messageInputArea.clear();
+            
+            // 3. Отправляем в фоне
+            chatService.sendMessageAsync(currentUserId, receiverId, messageText)
+                .thenAccept(success -> {
+                    Platform.runLater(() -> {
+                        if (success) {
+                            System.out.println("ASYNC: Message sent successfully");
+                            // Обновляем список чатов
+                            updateLastMessageInChatList(localMessage);
+                        } else {
+                            System.out.println("ASYNC: Failed to send message");
+                            showErrorMessage("Failed to send message");
+                        }
+                    });
+                })
+                .exceptionally(e -> {
+                    Platform.runLater(() -> {
+                        System.out.println("ASYNC ERROR sending message: " + e.getMessage());
+                        showErrorMessage("Error sending message");
+                    });
+                    return null;
+                });
         }
+    }
+    
+    private Message createLocalMessage(Integer senderId, Integer receiverId, String text) {
+        Message message = new Message();
+        message.setSenderId(senderId);
+        message.setReceiverId(receiverId);
+        message.setMessageText(text);
+        message.setCreatedAt(LocalDateTime.now());
+        message.setIsRead(false);
+        return message;
     }
     
     private void addSingleMessageToUI(Message message) {
@@ -442,13 +538,12 @@ public class ChatController implements Initializable {
     }
     
     private void showErrorMessage(String message) {
-        // Could be enhanced with dialog or status label
         System.err.println("Chat Error: " + message);
         
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Chat Error");
-            alert.setHeaderText("Error sending message");
+            alert.setHeaderText("Error");
             alert.setContentText(message);
             alert.showAndWait();
         });
@@ -668,6 +763,10 @@ public class ChatController implements Initializable {
     public void shutdown() {
         System.out.println("ChatController shutdown initiated...");
         
+        if (chatService != null) {
+            chatService.shutdown();
+        }
+        
         if (scheduler != null && !scheduler.isShutdown()) {
             scheduler.shutdown();
             try {
@@ -692,7 +791,7 @@ public class ChatController implements Initializable {
     // Метод для принудительного обновления чатов
     public void forceRefreshChats() {
         if (SessionManager.getInstance().isLoggedIn()) {
-            loadUserChats();
+            loadUserChatsAsync(); // Используем async версию
         }
     }
     

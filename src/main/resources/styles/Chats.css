@@ -303,3 +303,25 @@
 .chat-dark .message-bubble-theirs .message-text {
     -fx-text-fill: #ffffff;
 }
+
+/* Индикатор загрузки сообщений */
+.loading-label {
+    -fx-text-fill: #666;
+    -fx-font-size: 14px;
+}
+
+.no-messages-label {
+    -fx-text-fill: #999;
+    -fx-font-size: 14px;
+    -fx-padding: 40px 0;
+}
+
+/* Скелетон для загрузки (опционально) */
+.message-skeleton {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 12px;
+    -fx-padding: 12px 18px;
+    -fx-min-height: 40px;
+    -fx-max-width: 300px;
+    -fx-margin: 6px 0;
+}
